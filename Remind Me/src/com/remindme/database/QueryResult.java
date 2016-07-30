@@ -22,6 +22,11 @@ public class QueryResult {
 		return this.data.get(i);
 	}
 
+	public String getElement(int i, String s){
+		int j = getColumnIndex(s);
+		return getElement(i,j);
+	}
+	
 	public String getElement(int i, int j){
 		return this.data.get(i).get(j);
 	}

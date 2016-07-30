@@ -3,6 +3,8 @@ package com.remindme.reminder;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 import com.remindme.user.User;
 
 public class Reminder {
@@ -10,19 +12,21 @@ public class Reminder {
 	private User user;
 	private int reminder_id;
 	private boolean complete;
-	private Date due_date;
-	private Date created;
+	private DateTime due_date;
+	private DateTime created;
+	private boolean deleted;
 	
 	private ArrayList<String> tags;
-	
-	public Reminder(){}
-	
-	public Reminder(String reminder, User user, int reminder_id, boolean complete, Date due_date, Date created){
-		
-	}
-	
-	public Reminder(String reminder, User user, int reminder_id, boolean complete, String due_date, String created){
-		
+
+	public Reminder(int reminder_id, User user, String reminder, DateTime created, DateTime due_date,
+			boolean complete, boolean deleted) {
+		this.reminder_id = reminder_id;
+		this.user = user;
+		this.reminder = reminder;
+		this.created = created;
+		this.due_date = due_date;
+		this.complete = complete;
+		this.setDeleted(deleted);
 	}
 
 	public String getReminder() {
@@ -57,7 +61,7 @@ public class Reminder {
 		this.complete = complete;
 	}
 
-	public Date getDueDate() {
+	public DateTime getDueDate() {
 		return due_date;
 	}
 	
@@ -65,15 +69,15 @@ public class Reminder {
 		return due_date.toString();
 	}
 
-	public void setDueDate(Date due_date) {
+	public void setDueDate(DateTime due_date) {
 		this.due_date = due_date;
 	}
 
-	public Date getCreated() {
+	public DateTime getCreated() {
 		return created;
 	}
 
-	public void setCreated(Date created) {
+	public void setCreated(DateTime created) {
 		this.created = created;
 	}
 
@@ -87,5 +91,23 @@ public class Reminder {
 	
 	public void addTag(String tag){
 		this.tags.add(tag);
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	public String toString(){
+		return reminder + " | " +
+		user + " | " +
+		reminder_id + " | " +
+		complete + " | " +
+		due_date + " | " +
+		created + " | " +
+		deleted;
 	}
 }

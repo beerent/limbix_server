@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
+import com.remindme.reminder.Reminder;
 import com.remindme.reminder.ReminderManager;
 import com.remindme.user.User;
 import com.remindme.user.UserManager;
+import com.remindme.util.DateUtil;
 
 public class RequestHandler {
 
@@ -75,19 +77,25 @@ public class RequestHandler {
 	}
 	
 	private RequestResponse handleAddReminderRequest(Request request){
+		DateUtil date_util = new DateUtil();
 		ReminderManager reminder_manager = new ReminderManager();
 		User user = request.getUser();
-		String reminder = request.getReminder();
-		DateTime due_date = request.getDueDate();
-		ArrayList<String> tags = reminder_manager.getTags(reminder);
+		String reminder_str = request.getReminder();
+		String current_time = date_util.JodaDateTimeToSQLDateTime(date_util.getCurrentDateTime());
+		String due_date = null;
+		if(request.getDueDate()!= null)
+			due_date = date_util.JodaDateTimeToSQLDateTime(request.getDueDate());
+		ArrayList<String> tags = reminder_manager.getTags(reminder_str);
 		
-		int reminder_id = reminder_manager.addReminder(user, reminder);
-		if(reminder_id == -1){
+		Reminder reminder = reminder_manager.addReminder(user, reminder_str, current_time, due_date);
+		if(reminder == null){
 			System.out.println("request from " + request.getUsername() + " failed to add");
 		}else{
 			System.out.println("request from " + request.getUsername() + " was a success!");
-			reminder_manager.addTags(reminder_id, tags);
+			reminder_manager.map_tags(reminder, tags);
 		}
+		
+		System.out.println(reminder);
 		RequestResponse request_response = new RequestResponse();
 		
 		return request_response;

@@ -24,9 +24,29 @@ public class RequestBuilder {
 		JSONObject json = json_util.getJSONObect(response);
 		json = (JSONObject) json.get("request");
 		
+		String username = (String) json.get("username");
+		String password = (String) json.get("password");
 		String type = (String) json.get("type");
 		
 		Request request = new Request();
+		
+		if(username == null){
+			request.setUsername(null);
+			return request;
+		}
+		request.setUsername(username);
+		
+		if(password == null){
+			request.setPassword(null);
+			return request;
+		}
+		request.setPassword(password);
+		
+		if(type == null){
+			request.setRequestType(null);
+			return request;
+		}
+
 		if(type.equals("add")){
 			buildAddRequest(request, json);
 		}
@@ -39,8 +59,6 @@ public class RequestBuilder {
 		request.setRequestType(RequestType.add);
 		request.setReminder((String) json.get("reminder"));
 		request.setTags((String) json.get("reminder"));
-		request.setUsername((String) json.get("username"));
-		request.setPassword((String) json.get("password"));
 		request.setDueDate(date_util.getDateTime((String) json.get("due")));
 		request.setCreatedDate(date_util.getDateTime((String) json.get("current")));
 	}

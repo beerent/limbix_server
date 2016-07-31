@@ -105,9 +105,9 @@ public class Reminder {
 		return reminder + " | " +
 		user + " | " +
 		reminder_id + " | " +
-		complete + " | " +
 		due_date + " | " +
 		created + " | " +
+		complete + " | " +
 		deleted;
 	}
 }

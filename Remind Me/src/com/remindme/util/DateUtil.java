@@ -15,9 +15,9 @@ public class DateUtil {
 		if(s == "null")
 			return null;
 		
-		if(s.split(" ").length == 1){
-			s = s + " 00:00:00";
-		}
+		//if(s.split(" ").length == 1){
+		//	s = s + " 00:00:00";
+		//}
 		
 		if(s.contains(".0"))
 			s = s.substring(0, s.lastIndexOf(".0"));
@@ -29,12 +29,14 @@ public class DateUtil {
 	}
 	
 	public String JodaDateTimeToSQLDateTime(DateTime date_time){
+		if(date_time == null)
+			return null;
 		DateTimeFormatter formatter = getDateTimeFormatter();
 		return date_time.toString(formatter);
 	}
 	
 	private DateTimeFormatter getDateTimeFormatter(){
-		return DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		return DateTimeFormat.forPattern("yyyy-MM-dd");
 	}
 	
 	public DateTime getCurrentDateTime(){

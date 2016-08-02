@@ -13,9 +13,9 @@ import com.remindme.user.User;
 import com.remindme.user.UserManager;
 
 public class ConnectionHandler extends Thread{
-	private Socket socket;
-	private SocketReader reader;
-	private SocketWriter writer;
+	private Socket socket;        //socket to client
+	private SocketReader reader;  //read strings from client
+	private SocketWriter writer;  //write strings to client
 	
 	public ConnectionHandler(Socket socket){
 		this.socket = socket;
@@ -23,6 +23,9 @@ public class ConnectionHandler extends Thread{
 		this.writer = new SocketWriter(socket);
 	}
 	
+	/*
+	 * Create new thread and handle the incoming connection.
+	 */
 	public void run(){
 		RequestBuilder request_builder = new RequestBuilder();
 		RequestManager request_manager = new RequestManager();
@@ -31,11 +34,15 @@ public class ConnectionHandler extends Thread{
 		UserManager user_manager = new UserManager();
 		String in;
 		
+		/* CONTACT CLIENT, AND READ IN REQUEST */
 		write("OK");
 		in = read();
 		
+		/* CONVERT JSON STRING TO REQUEST OBJECT */
 		Request request = request_builder.buildRequest(in);
 		RequestResponse response;
+		
+		System.out.println(request);
 		
 		/* VERIFY CORE FIELDS */
 		response = request_manager.verifyCoreFields(request);
@@ -46,44 +53,42 @@ public class ConnectionHandler extends Thread{
 		}
 
 		/* VERIFY USERNAME/PASSWORD COMBO */
-		System.out.println("trying: " + request.getUsername() + " " + request.getPassword());
 		User user = user_manager.authenticateUser(request.getUsername(), request.getPassword());
 		if(user == null){
-			System.out.println("invalid credentials");
 			response = response_manager.invalidCredientials();
 			write(response.toString());
 			disconnect();
 			return;
 		}
-		System.out.println(user.getUsername() + " successfully logged in");
 		request.setUser(user);
 		
 		/* VERIFY REMAINING REQUIRED FIELDS ARE PRESENT */
-		response = request_manager.vertifyRequestFields(request);
+		response = request_manager.verifyRequestFields(request);
 		if(response != null){
 			write(response.toString());
 			disconnect();
 			return;
 		}
 		request.setContainsRequiredFields(true);
-		System.out.println("request from " + user.getUsername() + " has all required fields");
 		
 		/* VALIDATE REQUEST FIELDS */
 		response = request_manager.confirmFields(request);
 		if(response != null){
 			write(response.toString());
-			System.out.println("request from " + user.getUsername() + " did not confirm fields");
 			disconnect();
 			return;
 		}	
 		request.setConfirmedFields(true);
-		System.out.println("request from " + user.getUsername() + " confirmed fields");
 	
+		/* HANDLE THE REQUEST, AND SEND RESPONSE STRING */
 		response = request_handler.handleRequest(request);
 		write(response.toString());
 		disconnect();
 	}
 	
+	/*
+	 * Close I/O and the socket
+	 */
 	private void disconnect(){
 		try {
 			this.reader.close();
@@ -92,13 +97,18 @@ public class ConnectionHandler extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("connection terminted");
 	}
 	
+	/*
+	 * Write to the socket
+	 */
 	private void write(String s){
 		this.writer.write(s);
 	}
 	
+	/*
+	 * read from the socket 
+	 */
 	private String read(){
 		return this.reader.read();
 	}

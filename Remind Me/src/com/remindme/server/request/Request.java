@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import org.joda.time.DateTime;
 
+import com.remindme.reminder.ReminderManager;
 import com.remindme.user.User;
 
 public class Request {
@@ -13,10 +14,14 @@ public class Request {
 	private String password;
 	private User user;
 	private String reminder;
-	private int reminder_id;
+	private Integer reminder_id;
 	private DateTime due_date;
+	private DateTime due_date_before;
+	private DateTime due_date_after;
 	private DateTime created_date;
-	private boolean complete;
+	private DateTime created_date_before;
+	private DateTime created_date_after;
+	private Boolean complete;
 	private ArrayList<String> tags;
 	
 	private boolean contains_required_fields;
@@ -56,8 +61,8 @@ public class Request {
 	public void setReminder(String reminder) { this.reminder = reminder; }
 	public String getReminder() { return this.reminder; }
 	
-	public void setReminderId(int reminder_id) { this.reminder_id = reminder_id; }
-	public int getReminderId() { return this.reminder_id; }
+	public void setReminderId(Integer reminder_id) { this.reminder_id = reminder_id; }
+	public Integer getReminderId() { return this.reminder_id; }
 	
 	public void setDueDate(DateTime due_date) { this.due_date = due_date; }
 	public DateTime getDueDate() { return this.due_date; }
@@ -65,21 +70,32 @@ public class Request {
 	public void setCreatedDate(DateTime created_date) { this.created_date = created_date; }
 	public DateTime getCreatedDate() { return this.created_date; }
 	
-	public void setComplete(boolean complete){ this.complete = complete; }
-	public boolean getComplete() { return this.complete; }
+	public void setComplete(Boolean complete){ this.complete = complete; }
+	public Boolean getComplete() { return this.complete; }
+
+	public void setUser(User user) { this.user = user; }
+	public User getUser(){ return this.user; }
+
+	public DateTime getDueDateBefore() { return due_date_before; }
+	public void setDueDateBefore(DateTime due_date_before) { this.due_date_before = due_date_before; }
+
+	public DateTime getDueDateAfter() { return due_date_after; }
+	public void setDueDateAfter(DateTime due_date_after) { this.due_date_after = due_date_after; }
+
+	public DateTime getCreatedDateBefore() { return created_date_before; }
+	public void setCreatedDateBefore(DateTime created_date_before) { this.created_date_before = created_date_before; }
+
+	public DateTime getCreatedDateAfter() { return created_date_after; }
+	public void setCreatedDateAfter(DateTime created_date_after) { this.created_date_after = created_date_after; }
 	
-	public void setTags(String reminder){
-		if(reminder == null)
+	public void setTags(ArrayList<String> tags){
+		if(tags == null)
+			return;
+
+		if(tags.size() == 0)
 			return;
 		
-		Scanner sc = new Scanner(reminder);
-		
-		String token;
-		while(sc.hasNext()){
-			token = sc.next();
-			if(token.charAt(0) == '#')
-				addTag(token);
-		}
+		this.tags = tags;
 	}
 	
 	public void addTag(String tag){
@@ -97,19 +113,15 @@ public class Request {
 		retstr += "\npassword" + password;
 		retstr += "\nreminder : " + reminder;
 		retstr += "\nreminder_id: " + reminder_id;
+		retstr += "\ndue date before: " + due_date_before;
 		retstr += "\ndue date: " + due_date;
+		retstr += "\ndue date after: " + due_date_after;
+		retstr += "\ncreated date before: " + created_date_before;
 		retstr += "\ncreated date: " + created_date;
+		retstr += "\ncreated date after: " + created_date_after;
 		retstr += "\nis complete: " + complete;
 		retstr += "\ntags: " + tags;
 		return retstr;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
-	public User getUser(){
-		return this.user;
 	}
 	
 }

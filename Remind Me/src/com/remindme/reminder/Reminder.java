@@ -29,6 +29,11 @@ public class Reminder {
 		this.setDeleted(deleted);
 	}
 
+	public Reminder(String element, User user2, String element2, String element3, String element4, String complete2,
+			String string) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getReminder() {
 		return reminder;
 	}

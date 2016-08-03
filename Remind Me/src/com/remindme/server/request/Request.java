@@ -9,6 +9,8 @@ import com.remindme.reminder.ReminderManager;
 import com.remindme.user.User;
 
 public class Request {
+	private String first_name;
+	private String last_name;
 	private RequestType request_type;
 	private String username;
 	private String password;
@@ -26,6 +28,8 @@ public class Request {
 	
 	private boolean contains_required_fields;
 	private boolean confirmed_fields;
+	private String password2;
+	private String email;
 	
 	public Request(){
 		this.tags = new ArrayList<String>();
@@ -87,6 +91,18 @@ public class Request {
 
 	public DateTime getCreatedDateAfter() { return created_date_after; }
 	public void setCreatedDateAfter(DateTime created_date_after) { this.created_date_after = created_date_after; }
+	
+	public String getPassword2(){ return this.password2; }
+	public void setPassword2(String password2) { this.password2 = password2; }
+	
+	public String getFirstName(){ return this.first_name; }
+	public void setFirstName(String first_name) { this.first_name = first_name; }
+	
+	public String getLastName(){ return this.last_name; }
+	public void setLastName(String last_name) { this.last_name = last_name; }
+	
+	public String getEmail(){ return this.email; }
+	public void setEmail(String email) { this.email = email; }
 	
 	public void setTags(ArrayList<String> tags){
 		if(tags == null)

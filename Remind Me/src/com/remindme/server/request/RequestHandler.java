@@ -16,11 +16,13 @@ public class RequestHandler {
 	private ResponseManager response_manager;
 	private DateUtil date_util;
 	private ReminderManager reminder_manager;
+	private UserManager user_manager;
 
 	public RequestHandler(){
 		this.response_manager = new ResponseManager();
 		this.date_util = new DateUtil();
 		this.reminder_manager = new ReminderManager();
+		this.user_manager = new UserManager();
 	}
 	
 	public RequestResponse handleRequest(Request request) {
@@ -35,10 +37,9 @@ public class RequestHandler {
 		
 		RequestResponse request_response = null;
 		RequestType request_type = request.getRequestType();
-		if(request_type == RequestType.add)
-			request_response = handleAddReminderRequest(request);
-		if(request_type == RequestType.get)
-			request_response = handleGetRemindersRequest(request);
+		if(request_type == RequestType.add) request_response = handleAddReminderRequest(request);
+		if(request_type == RequestType.get) request_response = handleGetRemindersRequest(request);
+		if(request_type == RequestType.register_user) request_response = handleRegisterUserRequest(request);
 		
 		return request_response;
 	}
@@ -93,6 +94,16 @@ public class RequestHandler {
 			return this.response_manager.tooManyRemindersFound();
 		return this.response_manager.getRemindersSuccess(reminders);
 		
+	}
+	
+	private RequestResponse handleRegisterUserRequest(Request request) {
+		String username = request.getUsername();
+		String password = request.getPassword();
+		String first = request.getFirstName();
+		String last = request.getLastName();
+		String email = request.getEmail();
+		this.user_manager.registerUser(username, email, first, last, password);
+		return this.response_manager.registerUserSuccess();
 	}
 
 }

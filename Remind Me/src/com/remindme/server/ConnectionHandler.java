@@ -58,6 +58,7 @@ public class ConnectionHandler extends Thread{
 			return;
 		}
 		
+		/* DETERMINE PRE OR POST LOGIN REQUEST */
 		boolean is_pre  = RequestType.isPreLoginRequest(request.getRequestType());
 		boolean is_post = RequestType.isPostLoginRequest(request.getRequestType());
 		if(is_pre)
@@ -74,25 +75,10 @@ public class ConnectionHandler extends Thread{
 		}
 		
 		disconnect();
-		//done
-			
-		
-		
-			
-		/* DETERMINE PRE OR POST LOGIN REQUEST */
-
-		/*  */
-		/* VERIFY CORE FIELDS */
-		response = request_manager.verifyRequestType(request);
-		if(response != null){
-			write(response.toString());
-			disconnect();
-			return;
-		}
 	}
 	
 	private String completePreLoginRequest(Request request) {
-		return "pre request";
+		return finishPreAndPostLoginRequest(request);
 	}
 	
 	/* RETURNS A JSON STRING ACCORDING TO HOW THE REQUEST WENT */

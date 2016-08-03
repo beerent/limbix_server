@@ -20,6 +20,21 @@ public class ResponseManager {
 	public RequestResponse missingPassword() {
 		return createErrorResponse("Request is missing password.");
 	}
+	public RequestResponse missingPassword2() {
+		return createErrorResponse("Request is missing second password.");
+	}
+	
+	public RequestResponse missingFirstName(){
+		return createErrorResponse("Request is missing first name.");
+	}
+	
+	public RequestResponse missingLastName(){
+		return createErrorResponse("Request is missing last name.");
+	}
+	
+	public RequestResponse missingEmail(){
+		return createErrorResponse("Request is missing email address.");
+	}
 	
 	public RequestResponse missingRequestType() {
 		return createErrorResponse("Request is missing request type.");
@@ -57,12 +72,88 @@ public class ResponseManager {
 		return createErrorResponse("Too many Reminders found. Please limit your search.");
 	}
 	
+	public RequestResponse usernameTooShort() {
+		return createErrorResponse("Username must have at least 3 characters.");
+	}
+	
+	public RequestResponse usernameTooLong() {
+		return createErrorResponse("Username must have at most 20 characters.");
+	}
+	
+	public RequestResponse invalidUsername() {
+		return createErrorResponse("Username is invalid. Characters must be alphanumeric or the character _.");
+	}
+	
+	public RequestResponse usernameMissingAlphaCharacter() {
+		return createErrorResponse("Username must contain atleast one alpha character.");
+	}
+	
+	public RequestResponse usernameAlreadyExists() {
+		return createErrorResponse("Username already exists.");
+	}
+	
+	public RequestResponse passwordTooShort() {
+		return createErrorResponse("Password must have at least 8 characters.");
+	}
+	
+	public RequestResponse passwordTooLong() {
+		return createErrorResponse("Password must have at most 25 characters.");
+	}
+	
+	public RequestResponse passwordMissingAlphaCharacter() {
+		return createErrorResponse("Password must contain atleast one alpha character.");
+	}
+	
+	public RequestResponse passwordsDoNotMatch() {
+		return createErrorResponse("Password fields must match.");
+	}
+	
+	public RequestResponse passwordMissingNumericCharacter() {
+		return createErrorResponse("Password must contain atleast one numeric character.");
+	}
+	
+	public RequestResponse firstNameTooShort() {
+		return createErrorResponse("First name must have at least 1 character.");
+	}
+	
+	public RequestResponse lastNameTooShort() {
+		return createErrorResponse("Last name must have at least 1 character.");
+	}
+	
+	public RequestResponse firstNameTooLong() {
+		return createErrorResponse("First name must have at most 50 characters.");
+	}
+	
+	public RequestResponse lastNameTooLong() {
+		return createErrorResponse("Last name must have at most 50 characters.");
+	}
+	
+	public RequestResponse invalidFirstName() {
+		return createErrorResponse("First name is invalid. Characters must be alphanumeric or the characters _ and -.");
+	}
+	
+	public RequestResponse invalidLastName() {
+		return createErrorResponse("Last name is invalid. Characters must be alphanumeric or the characters _ and -.");
+	}
+	
+	public RequestResponse invalidEmail() {
+		return createErrorResponse("Email address is invalid.");
+	}
+	
+	public RequestResponse reminderTooLong() {
+		return createErrorResponse("Reminder is too long. Reminder can have a max of 300 characters.");
+	}
+
 	public RequestResponse unknownError() {
 		return createSuccessResponse("Request contains an unknown error. The error has been recorded.");
 	}
 	
 	public RequestResponse addReminderSuccess() {
 		return createSuccessResponse("Reminder is successful");
+	}
+	
+	public RequestResponse registerUserSuccess() {
+		return createSuccessResponse("User has successfully registered.");
 	}
 	
 	public RequestResponse getRemindersSuccess(ArrayList<Reminder> reminders){

@@ -53,41 +53,21 @@ public class RequestBuilder {
 		 * if one of the three core request fields aren't present,
 		 * set the field as null and return the request object.
 		 */
-		if(username == null){
-			request.setUsername(null);
-			return request;
-		}
 		request.setUsername(username);
-		
-		if(password == null){
-			request.setPassword(null);
-			return request;
-		}
 		request.setPassword(password);
-		
-		if(type == null){
-			request.setRequestType(null);
-			return request;
-		}
 
 		/**********************************************************
 		 *       IDENTIFY THE REQUEST AND RETURN THE OBJECT       *     
 		 **********************************************************/
 		
 		// ADD REMINDER REQUEST
-		if(type.equals("add")){
-			buildAddReminderRequest(request, json);
-		
+		if(type.equals("add")) buildAddReminderRequest(request, json);
 		
 		// GET REMINDER REQUEST
-		}else if(type.equals("get")){
-			buildGetRemindersRequest(request, json);
-		
+		else if(type.equals("get")) buildGetRemindersRequest(request, json);
 		
 		// REGISTER USER REQUEST
-		}else if(type.equals("register_user")){
-				buildRegisterUserRequest(request, json);
-		}
+		else if(type.equals("register_user")) buildRegisterUserRequest(request, json);
 		
 		return request;
 	}
@@ -145,6 +125,20 @@ public class RequestBuilder {
 	
 	private void buildRegisterUserRequest(Request request, JSONObject json){
 		RequestType request_type = RequestType.register_user;
+		String username = (String) json.get("username");
+		String password1 = (String) json.get("password");
+		String password2 = (String) json.get("password2");
+		String first_name = (String) json.get("first_name");
+		String last_name = (String) json.get("last_name");
+		String email = (String) json.get("email");
+			
+		request.setRequestType(request_type);
+		request.setUsername(username);
+		request.setPassword(password1);
+		request.setPassword2(password2);
+		request.setFirstName(first_name);
+		request.setLastName(last_name);
+		request.setEmail(email);
 	}
 	
 	

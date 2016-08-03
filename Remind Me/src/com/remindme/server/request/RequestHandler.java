@@ -89,7 +89,8 @@ public class RequestHandler {
 						due_date_after, created_date_before, created_date, created_date_after,
 						reminder_id, complete);
 		
-		
+		if(reminders.size() >= 500)
+			return this.response_manager.tooManyRemindersFound();
 		return this.response_manager.getRemindersSuccess(reminders);
 		
 	}

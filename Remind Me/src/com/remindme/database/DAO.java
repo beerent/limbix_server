@@ -8,10 +8,8 @@ public class DAO{
 	private static final String password = "root";
 	private static final String username = "root";
 
-	private Connection conn; // holds a connection to the database
 
 	public DAO(){
-		this.conn = getConnection();
 	}
 
 	/*
@@ -44,7 +42,7 @@ public class DAO{
 	 *                            "select release_name, date from releases limit 2" would return:
 	 *                                            <<"Release name 1", "date">, <"Release Name 2", "date">>
 	 */
-	public QueryResult executeQuery(PreparedStatement statement){
+	public QueryResult executeQuery(Connection connection, PreparedStatement statement){
 		ArrayList<ArrayList<String>> container = new ArrayList<ArrayList<String>>();
 		ArrayList<String> column_names = new ArrayList<String>();
 
@@ -71,20 +69,24 @@ public class DAO{
 					}
 				}
 			}
+			resultSet.close();
+			connection.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-
 		return new QueryResult(column_names, container);
 	}
 
 	// accepts an insert statement and commits it to the database
-	public int executeInsert(PreparedStatement statement){                    
+	public int executeInsert(Connection connection, PreparedStatement statement){                    
 		try{
 			statement.execute();
 			ResultSet rs = statement.getGeneratedKeys();
 			if(rs.next()){
-				return rs.getInt(1);
+				int result = rs.getInt(1);
+				rs.close();
+				connection.close();
+				return result;
 			}
 		}catch(Exception e){
 			e.printStackTrace();

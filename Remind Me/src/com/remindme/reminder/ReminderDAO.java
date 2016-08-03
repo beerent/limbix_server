@@ -1,5 +1,6 @@
 package com.remindme.reminder;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,11 +21,12 @@ public class ReminderDAO extends DAO{
 		String sql = "insert into reminders (user_id, reminder, created) values (?, ?, ?)";
 
 		try {
-			PreparedStatement statement = super.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setInt(1, user_id);
 			statement.setString(2, reminder);
 			statement.setString(3, current_time);
-			return executeInsert(statement);
+			return executeInsert(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -35,12 +37,13 @@ public class ReminderDAO extends DAO{
 		String sql = "insert into reminders (user_id, reminder, created, due_date) values (?, ?, ?, ?)";
 
 		try {
-			PreparedStatement statement = super.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setInt(1, user_id);
 			statement.setString(2, reminder);
 			statement.setString(3, current_time);
 			statement.setString(4, due_date);
-			return executeInsert(statement);
+			return executeInsert(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -50,9 +53,10 @@ public class ReminderDAO extends DAO{
 	public QueryResult getReminder(Integer reminder_id) {
 		String sql = "select reminder_id, user_id, reminder, created, due_date, complete, deleted from reminders where reminder_id = ?";
 		try {
-			PreparedStatement statement = super.getConnection().prepareStatement(sql);
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, reminder_id);
-			return executeQuery(statement);
+			return executeQuery(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -62,9 +66,10 @@ public class ReminderDAO extends DAO{
 	public QueryResult getTag(String tag) {
 		String sql = "select tag_id, tag from tags where tag = ?";
 		try {
-			PreparedStatement statement = super.getConnection().prepareStatement(sql);
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, tag);
-			return executeQuery(statement);
+			return executeQuery(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -75,9 +80,10 @@ public class ReminderDAO extends DAO{
 		String sql = "insert into tags (tag) values (?)";
 
 		try {
-			PreparedStatement statement = super.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, tag_str);
-			return executeInsert(statement);
+			return executeInsert(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -88,10 +94,11 @@ public class ReminderDAO extends DAO{
 		String sql = "insert into reminder_tag_map (reminder_id, tag_id) values (?, ?)";
 
 		try {
-			PreparedStatement statement = super.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setInt(1, reminder.getReminderId());
 			statement.setInt(2, tag_id);
-			return executeInsert(statement);
+			return executeInsert(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -107,8 +114,10 @@ public class ReminderDAO extends DAO{
 
 		String sql = "select distinct reminders.reminder_id, user_id, reminder, created, due_date, complete, deleted ";
 		sql += "from reminders ";
-		sql += "join reminder_tag_map on reminders.reminder_id = reminder_tag_map.reminder_id ";
-		sql += "join tags on tags.tag_id = reminder_tag_map.tag_id ";
+		if(tags != null){
+			sql += "join reminder_tag_map on reminders.reminder_id = reminder_tag_map.reminder_id ";
+			sql += "join tags on tags.tag_id = reminder_tag_map.tag_id ";
+		}
 		sql += "where user_id = ? ";
 		if(tags != null){
 			tags_as_arraylist = reminder_manager.getTagsFromRequest(tags);
@@ -135,7 +144,8 @@ public class ReminderDAO extends DAO{
 			sql += "and complete = ?";
 
 		try {
-			PreparedStatement statement = super.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setInt(1, user_id);
 			int i = 2;
 			if(tags != null){
@@ -185,7 +195,7 @@ public class ReminderDAO extends DAO{
 			}
 			
 			System.out.println(statement);
-			return executeQuery(statement);
+			return executeQuery(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

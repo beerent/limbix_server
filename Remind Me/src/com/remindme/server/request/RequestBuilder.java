@@ -23,10 +23,13 @@ public class RequestBuilder {
 	 * 
 	 * TYPES IN PROGRESS:
 	 *   - add
+	 *   - get
+	 *   - registeruser
 	 *   
 	 * TYPES TO DO:
-	 *   - get
+	 *   
 	 *   - update
+	 *
 	 */
 	public Request buildRequest(String response) {
 		JSONUtil json_util = new JSONUtil();
@@ -67,15 +70,50 @@ public class RequestBuilder {
 			return request;
 		}
 
-		/* Identify the request, and return the object. */
+		/**********************************************************
+		 *       IDENTIFY THE REQUEST AND RETURN THE OBJECT       *     
+		 **********************************************************/
+		
+		// ADD REMINDER REQUEST
 		if(type.equals("add")){
 			buildAddReminderRequest(request, json);
+		
+		
+		// GET REMINDER REQUEST
 		}else if(type.equals("get")){
 			buildGetRemindersRequest(request, json);
+		
+		
+		// REGISTER USER REQUEST
+		}else if(type.equals("register_user")){
+				buildRegisterUserRequest(request, json);
 		}
+		
 		return request;
 	}
 	
+	/*
+	 * Adds the appropriate fields for an ADD REMINDER request to 
+	 * the request object.
+	 */
+	private void buildAddReminderRequest(Request request, JSONObject json){
+		RequestType request_type = RequestType.add;
+		String reminder = (String) json.get("reminder");
+		ArrayList<String> tags = this.reminder_manager.getTags((String) json.get("reminder"));
+		DateTime due_date = this.date_util.getDateTime((String) json.get("due_date"));
+		DateTime created = this.date_util.getDateTime((String) json.get("current"));
+		
+		request.setRequestType(request_type);
+		request.setReminder(reminder);
+		request.setTags(tags);
+		request.setDueDate(due_date);
+		request.setCreatedDate(created);
+	}
+	
+	/*
+	 *  Adds the appropriate fields for a GET REMINDER request to
+	 *  the request object.
+	 */
 	private void buildGetRemindersRequest(Request request, JSONObject json) {
 		RequestType request_type = RequestType.get;
 		ArrayList<String> tags = this.reminder_manager.getTagsFromRequest((String) json.get("tags"));
@@ -103,26 +141,13 @@ public class RequestBuilder {
 		request.setCreatedDateAfter(created_after);
 		request.setReminderId(reminder_id);
 		request.setComplete(complete);
-		
 	}
-
-	/*
-	 * Adds the appropriate fields for a Add Reminder request to 
-	 * the request object.
-	 */
-	private void buildAddReminderRequest(Request request, JSONObject json){
-		RequestType request_type = RequestType.add;
-		String reminder = (String) json.get("reminder");
-		ArrayList<String> tags = this.reminder_manager.getTags((String) json.get("reminder"));
-		DateTime due_date = this.date_util.getDateTime((String) json.get("due_date"));
-		DateTime created = this.date_util.getDateTime((String) json.get("current"));
-		
-		request.setRequestType(request_type);
-		request.setReminder(reminder);
-		request.setTags(tags);
-		request.setDueDate(due_date);
-		request.setCreatedDate(created);
+	
+	private void buildRegisterUserRequest(Request request, JSONObject json){
+		RequestType request_type = RequestType.register_user;
 	}
+	
+	
 	
 	public static void main(String[] args) {
 		String response = "{ \"request\": { \"type\": \"add\", \"username\": \"user1\", \"password\": \"pass1\", \"reminder\": \"this is my first reminder\", \"due\": \"11/04/2016 22:40:40\",\"current\": \"21/7/2016 12:00:30\" } }";

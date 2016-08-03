@@ -1,9 +1,5 @@
 package com.remindme.server.request;
 
-import java.util.ArrayList;
-
-import org.joda.time.DateTime;
-
 import com.remindme.reminder.ReminderManager;
 import com.remindme.server.response.RequestResponse;
 import com.remindme.server.response.ResponseManager;
@@ -19,7 +15,21 @@ public class RequestManager {
 	 * VERIFY SECTION *
 	 ******************/
 
-	public RequestResponse verifyCoreFields(Request request) {
+	public RequestResponse verifyRequestType(Request request) {
+		RequestResponse response = new RequestResponse();
+
+		if(request.getRequestType() == null){
+			response = response_manager.missingRequestType();
+			return response;
+		}
+		
+		return null;
+	}
+	
+	/* RETURNS NULL IF REQUEST USERNAME AND PASSWORD EXIST */
+	/* RETURNS A REQUEST RESPONSE IF USERNAME OR PASSWORD DO NOT EXIST */
+	
+	public RequestResponse verifyRequestUsernameAndPasswordExist(Request request){
 		RequestResponse response = new RequestResponse();
 		if(request.getUsername() == null){
 			response = response_manager.missingUsername();
@@ -31,18 +41,11 @@ public class RequestManager {
 			return response;
 		}
 		
-		if(request.getRequestType() == null){
-			response = response_manager.missingRequestType();
-			return response;
-		}
 		return null;
 	}
 
 	public RequestResponse verifyRequestFields(Request request) {
-		RequestResponse response = verifyCoreFields(request);
-		if(response != null)
-			return response;
-		
+		RequestResponse response;		
 		RequestType type = request.getRequestType();
 		if(type == RequestType.add){
 			return verifyAddReminderRequestFields(request);
@@ -105,7 +108,7 @@ public class RequestManager {
 	}
 
 	private RequestResponse confirmGetRemindersFields(Request request) {
-		/*int due_date_set = 0;
+		int due_date_set = 0;
 		if(request.getDueDateBefore() != null)
 			due_date_set++;
 		if(request.getDueDate() != null)
@@ -123,7 +126,8 @@ public class RequestManager {
 		if(request.getCreatedDateAfter() != null)
 			created_date_set++;
 		if(created_date_set > 1)
-			return response_manager.multipleCreatedDateConstraints();*/
+			return response_manager.multipleCreatedDateConstraints();
 		return null;
 	}
+	
 }

@@ -167,7 +167,7 @@ public class ReminderManager {
 		ArrayList<Reminder> reminders = new ArrayList<Reminder>();
 		boolean complete_bool = false;
 		boolean deleted = false;
-		System.out.println(results.numRows());
+
 		for(int i = 0; i < results.numRows(); i++){
 			complete_bool = results.getElement(i, "complete").equals("1");
 		

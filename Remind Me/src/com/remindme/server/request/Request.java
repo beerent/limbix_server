@@ -24,6 +24,7 @@ public class Request {
 	private DateTime created_date_before;
 	private DateTime created_date_after;
 	private Boolean complete;
+	private Boolean deleted;
 	private ArrayList<String> tags;
 	
 	private boolean contains_required_fields;
@@ -139,5 +140,8 @@ public class Request {
 		retstr += "\ntags: " + tags;
 		return retstr;
 	}
+
+	public void setDeleted(boolean b) { this.deleted = b; }
+	public Boolean getDeleted(){ return this.deleted; }
 	
 }

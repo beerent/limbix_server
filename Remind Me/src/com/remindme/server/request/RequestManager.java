@@ -1,5 +1,6 @@
 package com.remindme.server.request;
 
+import com.remindme.reminder.Reminder;
 import com.remindme.reminder.ReminderManager;
 import com.remindme.server.response.RequestResponse;
 import com.remindme.server.response.ResponseManager;
@@ -8,12 +9,14 @@ import com.remindme.user.UserManager;
 public class RequestManager {
 	private ResponseManager response_manager;
 	private ReminderManager reminder_manager;
+	private RequestValidator request_validator;
 	private UserManager user_manager;
 	
 	public RequestManager(){
 		this.reminder_manager = new ReminderManager();
 		this.response_manager = new ResponseManager();
-		this.user_manager = new UserManager();
+		this.request_validator = new RequestValidator();
+		this.user_manager     = new UserManager();
 	}
 	
 	/******************
@@ -53,7 +56,8 @@ public class RequestManager {
 		RequestResponse response;		
 		RequestType type = request.getRequestType();
 		if(type == RequestType.add) return verifyAddReminderRequestFields(request);
-		else if(type == RequestType.get) return verifyGetReminderRequestFields(request);
+		else if(type == RequestType.get) return verifyGetRemindersRequestFields(request);
+		else if(type == RequestType.update_reminder) return verifyUpdateReminderRequestFields(request);
 		else if(type == RequestType.register_user) return verifyRegisterUserFields(request);
 		else return response_manager.invalidRequestType();
 	}
@@ -64,24 +68,25 @@ public class RequestManager {
 		return null;
 	}
 	
-	private RequestResponse verifyGetReminderRequestFields(Request request) {
+	private RequestResponse verifyGetRemindersRequestFields(Request request) {
 		/*
 		 * NO REQUIREMENTS ON GET REQUEST AT THIS POINT
 		 */
 		return null;
 	}
+	
+	private RequestResponse verifyUpdateReminderRequestFields(Request request) {
+		if(request.getReminderId() == null)
+			return this.response_manager.invalidReminderId();
+		if(request.getReminder() == null && 
+				request.getDueDate() == null &&
+				request.getComplete() == null &&
+				request.getDeleted() == null)
+			return this.response_manager.nothingToUpdate();
+		return null;
+	}
 
 	private RequestResponse verifyRegisterUserFields(Request request){
-		/*
-		 * 		request.setRequestType(request_type);
-		request.setUsername(username);
-		request.setPassword(password1);
-		request.setPassword2(password2);
-		request.setFirstName(first_name);
-		request.setLastName(last_name);
-		request.setEmail(email);
-		 */
-		
 		if(request.getUsername() == null) return response_manager.missingUsername();
 		if(request.getPassword() == null) return response_manager.missingPassword();
 		if(request.getPassword2() == null) return response_manager.missingPassword2();
@@ -109,6 +114,7 @@ public class RequestManager {
 		
 		if(request.getRequestType() == RequestType.add) return confirmAddReminderFields(request);
 		if(request.getRequestType() == RequestType.get) return confirmGetRemindersFields(request);
+		if(request.getRequestType() == RequestType.update_reminder) return confirmUpdateReminderFields(request);
 		if(request.getRequestType() == RequestType.register_user) return confirmRegisterUserFields(request);
 	
 		return response_manager.unknownError();
@@ -119,15 +125,51 @@ public class RequestManager {
 	//reminder
 	private RequestResponse confirmAddReminderFields(Request request){		
 		String reminder = request.getReminder();
-		boolean valid_reminder = reminder_manager.validateReminder(reminder);
-		if(!valid_reminder)
-			return response_manager.invalidReminder();
-		if(reminder.length() > 300)
-			return response_manager.reminderTooLong();
-		return null;
+		return this.request_validator.validateReminderString(reminder);
 	}
 
 	private RequestResponse confirmGetRemindersFields(Request request) {
+		return null;
+	}
+	
+	private RequestResponse confirmUpdateReminderFields(Request request) {
+		//verify request id exists for this user
+		Reminder reminder = this.reminder_manager.getReminder(request.getReminderId());
+		if(reminder == null)
+			return this.response_manager.reminderIdDoesNotExistForUser();
+		
+		/*
+		 * 		if(request.getReminder() == null && 
+				request.getDueDate() == null &&
+				request.getComplete() == null &&
+				request.getDeleted() == null)
+		 */
+		RequestResponse response = null;
+		
+		//if reminder string is invalid, return error
+		if(request.getReminder() != null)
+			response = this.request_validator.validateReminderString(reminder.toString());
+		if(response != null)
+			return response;
+		
+		//if reminder due date is invalid, return error
+		if(request.getDueDate() != null)
+			response = this.request_validator.validateDueDate(reminder.getDueDate());
+		if(response != null)
+			return response;
+		
+		//if reminder complete is not valid, return error
+		if(request.getComplete() != null)
+			response = this.request_validator.validateComplete(reminder.isComplete());
+		if(response != null)
+			return response;
+		
+		//if reminder deleted is not valid, return error
+		if(request.getDeleted() != null)
+			response = this.request_validator.validateDeleted(reminder.isDeleted());
+		if(response != null)
+			return response;
+		
 		return null;
 	}
 	

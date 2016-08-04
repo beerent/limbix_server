@@ -26,7 +26,7 @@ public class TagManager {
 
 	public void mapTag(Tag tag, Reminder reminder) {
 		System.out.println("mapping " + reminder.getReminderId() + " to " + tag.getTagId());
-		this.reminder_dao.mapTag(tag.getTagId(), reminder);
+		this.reminder_dao.mapTag(tag.getTagId(), reminder.getReminderId());
 		
 	}
 

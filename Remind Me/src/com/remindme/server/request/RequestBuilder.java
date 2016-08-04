@@ -25,10 +25,11 @@ public class RequestBuilder {
 	 *   - add
 	 *   - get
 	 *   - registeruser
+	 *   - update
 	 *   
 	 * TYPES TO DO:
 	 *   
-	 *   - update
+	 *   
 	 *
 	 */
 	public Request buildRequest(String response) {
@@ -50,8 +51,7 @@ public class RequestBuilder {
 		Request request = new Request();
 		
 		/* 
-		 * if one of the three core request fields aren't present,
-		 * set the field as null and return the request object.
+		 * store username and password to request object
 		 */
 		request.setUsername(username);
 		request.setPassword(password);
@@ -65,6 +65,9 @@ public class RequestBuilder {
 		
 		// GET REMINDER REQUEST
 		else if(type.equals("get")) buildGetRemindersRequest(request, json);
+		
+		// UPDATE REMINDER REQUEST
+		else if(type.equals("update_reminder")) buildUpdateReminderRequest(request, json);
 		
 		// REGISTER USER REQUEST
 		else if(type.equals("register_user")) buildRegisterUserRequest(request, json);
@@ -121,6 +124,30 @@ public class RequestBuilder {
 		request.setCreatedDateAfter(created_after);
 		request.setReminderId(reminder_id);
 		request.setComplete(complete);
+	}
+	
+	private void buildUpdateReminderRequest(Request request, JSONObject json){
+		RequestType request_type = RequestType.update_reminder;
+		String reminder_id_str = (String) json.get("reminder_id");
+		String reminder = (String) json.get("reminder");
+		String due_date_str = (String) json.get("due_date");
+		String complete_str = (String) json.get("complete");
+		String deleted_str = (String) json.get("deleted");
+				
+		request.setRequestType(request_type);
+		
+		Integer reminder_id;
+		try{
+			reminder_id = Integer.parseInt(reminder_id_str);
+		}catch(Exception e){
+			reminder_id = null;
+		}
+		
+		request.setReminderId(reminder_id);
+		request.setReminder(reminder);
+		if(due_date_str != null) request.setDueDate(this.date_util.getDateTime(due_date_str));
+		if(complete_str != null) request.setComplete(complete_str.charAt(0) == '1');
+		if(deleted_str != null) request.setDeleted(deleted_str.charAt(0) == '1');
 	}
 	
 	private void buildRegisterUserRequest(Request request, JSONObject json){

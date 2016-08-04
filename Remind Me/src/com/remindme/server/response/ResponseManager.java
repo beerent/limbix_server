@@ -144,12 +144,36 @@ public class ResponseManager {
 		return createErrorResponse("Reminder is too long. Reminder can have a max of 300 characters.");
 	}
 
+	public RequestResponse nothingToUpdate() {
+		return createErrorResponse("Request contains no updatable fields to update.");
+	}
+
+	public RequestResponse invalidReminderId() {
+		return createErrorResponse("Invalid Reminder ID or no reminder ID found.");
+	}
+	
+	public RequestResponse reminderIdDoesNotExistForUser() {
+		return createErrorResponse("User does not have a reminder with the requested Reminder ID.");
+	}
+	
+	public RequestResponse reminderTooShort() {
+		return createErrorResponse("Reminder must contain at least one character.");
+	}
+	
+	public RequestResponse unableToUpdateReminder() {
+		return createErrorResponse("There was a problem updating your reminder.");
+	}
+	
+	public RequestResponse updateReminderSuccess() {
+		return createErrorResponse("Update to reminder was successful.");
+	}
+
 	public RequestResponse unknownError() {
-		return createSuccessResponse("Request contains an unknown error. The error has been recorded.");
+		return createErrorResponse("Request contains an unknown error. The error has been recorded.");
 	}
 	
 	public RequestResponse addReminderSuccess() {
-		return createSuccessResponse("Reminder is successful");
+		return createSuccessResponse("Reminder is successful.");
 	}
 	
 	public RequestResponse registerUserSuccess() {

@@ -13,9 +13,11 @@ import com.remindme.util.DateUtil;
 public class ReminderManager {
 	private static final int REMINDER_MAX_LENGTH = 300;
 	private ReminderDAO reminder_dao;
+	private DateUtil date_util;
 
 	public ReminderManager(){
 		this.reminder_dao = new ReminderDAO();
+		this.date_util = new DateUtil();
 	}
 	
 	/*
@@ -148,16 +150,14 @@ public class ReminderManager {
 	public ArrayList<Reminder> getReminders(User user, ArrayList<String> tags, DateTime due_date_before, DateTime due_date,
 			DateTime due_date_after, DateTime created_date_before, DateTime created_date, DateTime created_date_after,
 			Integer reminder_id, String complete) {
-		ReminderManager reminder_manager = new ReminderManager();
-		DateUtil date_util = new DateUtil();
 		QueryResult results = this.reminder_dao.getReminders(user.getUserId(),
-				reminder_manager.getTagsCommaDelimited(tags), 
-				date_util.JodaDateTimeToSQLDateTime(due_date_before),
-				date_util.JodaDateTimeToSQLDateTime(due_date),
-				date_util.JodaDateTimeToSQLDateTime(due_date_after),
-				date_util.JodaDateTimeToSQLDateTime(created_date_before),
-				date_util.JodaDateTimeToSQLDateTime(created_date),
-				date_util.JodaDateTimeToSQLDateTime(created_date_after),
+				getTagsCommaDelimited(tags), 
+				this.date_util.JodaDateTimeToSQLDateTime(due_date_before),
+				this.date_util.JodaDateTimeToSQLDateTime(due_date),
+				this.date_util.JodaDateTimeToSQLDateTime(due_date_after),
+				this.date_util.JodaDateTimeToSQLDateTime(created_date_before),
+				this.date_util.JodaDateTimeToSQLDateTime(created_date),
+				this.date_util.JodaDateTimeToSQLDateTime(created_date_after),
 				reminder_id, 
 				complete);
 		
@@ -182,5 +182,31 @@ public class ReminderManager {
 			reminders.add(new Reminder(reminder_id, user, reminder, created_date, due_date, complete_bool, deleted));
 		}
 		return reminders;
+	}
+
+	public Reminder updateReminder(int reminder_id, String reminder, DateTime due_date, Boolean complete,
+			Boolean deleted) {
+		String complete_str = null;
+		if(complete != null){
+			complete_str = "1";
+			if(!complete)
+				complete_str = "0";
+		}
+		String deleted_str = null;
+		if(deleted != null){
+			deleted_str = "1";
+			if(!deleted)
+				deleted_str = "0";
+		}
+		boolean result = this.reminder_dao.updateReminder(
+				reminder_id, 
+				reminder,
+				this.date_util.JodaDateTimeToSQLDateTime(due_date),
+				complete_str,
+				deleted_str);
+		System.out.println("result: " + result);
+		if(result)
+			this.reminder_dao.updateTags(reminder_id, getTags(reminder));
+		return getReminder(reminder_id);
 	}
 }

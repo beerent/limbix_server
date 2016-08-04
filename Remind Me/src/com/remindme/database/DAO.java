@@ -76,6 +76,15 @@ public class DAO{
 		}
 		return new QueryResult(column_names, container);
 	}
+	
+	public boolean executeUpdate(Connection connection, PreparedStatement statement){
+		try {
+			return statement.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 	// accepts an insert statement and commits it to the database
 	public int executeInsert(Connection connection, PreparedStatement statement){                    

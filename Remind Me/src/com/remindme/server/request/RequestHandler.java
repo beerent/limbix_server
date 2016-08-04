@@ -39,6 +39,7 @@ public class RequestHandler {
 		RequestType request_type = request.getRequestType();
 		if(request_type == RequestType.add) request_response = handleAddReminderRequest(request);
 		if(request_type == RequestType.get) request_response = handleGetRemindersRequest(request);
+		if(request_type == RequestType.update_reminder) request_response = handleUpdateReminderRequest(request);
 		if(request_type == RequestType.register_user) request_response = handleRegisterUserRequest(request);
 		
 		return request_response;
@@ -92,8 +93,22 @@ public class RequestHandler {
 		
 		if(reminders.size() >= 500)
 			return this.response_manager.tooManyRemindersFound();
+		System.out.println(reminders.size());
 		return this.response_manager.getRemindersSuccess(reminders);
 		
+	}
+	
+	private RequestResponse handleUpdateReminderRequest(Request request){
+
+		int reminder_id = request.getReminderId();
+		String reminder = request.getReminder();
+		DateTime due_date = request.getDueDate();
+		Boolean completed = request.getComplete();
+		Boolean deleted = request.getDeleted();
+		Reminder reminder_obj = this.reminder_manager.updateReminder(reminder_id, reminder, due_date, completed, deleted);
+		if(reminder_obj == null)
+			return this.response_manager.unableToUpdateReminder();
+		return this.response_manager.updateReminderSuccess();
 	}
 	
 	private RequestResponse handleRegisterUserRequest(Request request) {

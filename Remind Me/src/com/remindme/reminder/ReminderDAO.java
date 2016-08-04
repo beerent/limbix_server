@@ -90,13 +90,13 @@ public class ReminderDAO extends DAO{
 		return -1;
 	}
 
-	public int mapTag(Integer tag_id, Reminder reminder) {
+	public int mapTag(Integer tag_id, Integer reminder_id) {
 		String sql = "insert into reminder_tag_map (reminder_id, tag_id) values (?, ?)";
 
 		try {
 			Connection connection = super.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			statement.setInt(1, reminder.getReminderId());
+			statement.setInt(1, reminder_id);
 			statement.setInt(2, tag_id);
 			return executeInsert(connection, statement);
 		} catch (SQLException e) {
@@ -202,4 +202,77 @@ public class ReminderDAO extends DAO{
 		
 		return null;
 	}
+
+	public boolean updateReminder(int reminder_id, String reminder, String due_date,
+			String complete_str, String deleted_str) {
+		String sql = "update reminders set ";
+		if(reminder != null)
+			sql += "reminder = ? ";
+		if(due_date != null)
+			sql += "due_date = ? ";
+		if(complete_str != null)
+			sql += "complete = ? ";
+		if(deleted_str != null)
+			sql += "deleted = ? ";
+		sql += "where reminder_id = ?";
+		
+		try {
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql);
+			int i = 1;
+			
+			if(reminder != null){
+				statement.setString(i, reminder);
+				i++;
+			}
+			
+			if(due_date != null){
+				statement.setString(i, due_date);
+				i++;
+			}
+			
+			if(complete_str != null){
+				statement.setString(i, complete_str);
+				i++;
+			}
+			
+			if(deleted_str != null){
+				statement.setString(i, deleted_str);
+				i++;
+			}
+			statement.setInt(i, reminder_id);
+			System.out.println(statement);
+			return executeUpdate(connection, statement);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean updateTags(int reminder_id, ArrayList<String> tags) {
+		String sql = "delete from reminder_tag_map where reminder_id = ?";
+		try{
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, reminder_id);
+			executeUpdate(connection, statement);
+			
+			QueryResult result = null;
+			for(String tag : tags){
+				result = getTag(tag);
+				int tag_id;
+				if(result.containsData())
+					tag_id = Integer.parseInt(result.getElement(0, "tag_id"));
+				else
+					tag_id = addTag(tag);
+				mapTag(tag_id, reminder_id);
+			}
+			return true;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 }

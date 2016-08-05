@@ -56,6 +56,11 @@ public class RequestBuilder {
 		request.setUsername(username);
 		request.setPassword(password);
 
+		if(type == null){
+			request.setRequestType(null);
+			return request;
+		}
+		
 		/**********************************************************
 		 *       IDENTIFY THE REQUEST AND RETURN THE OBJECT       *     
 		 **********************************************************/

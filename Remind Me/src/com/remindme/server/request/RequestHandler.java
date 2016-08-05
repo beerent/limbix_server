@@ -14,14 +14,14 @@ import com.remindme.util.DateUtil;
 
 public class RequestHandler {
 	private ResponseManager response_manager;
-	private DateUtil date_util;
 	private ReminderManager reminder_manager;
+	private DateUtil date_util;
 	private UserManager user_manager;
 
 	public RequestHandler(){
 		this.response_manager = new ResponseManager();
-		this.date_util = new DateUtil();
 		this.reminder_manager = new ReminderManager();
+		this.date_util = new DateUtil();
 		this.user_manager = new UserManager();
 	}
 	
@@ -49,20 +49,24 @@ public class RequestHandler {
 	 * does the work to add a reminder
 	 */
 	private RequestResponse handleAddReminderRequest(Request request){
-		RequestResponse request_response = new RequestResponse();
-	
-		User user = request.getUser();
-		String reminder_str = request.getReminder();
-		String current_time = date_util.JodaDateTimeToSQLDateTime(date_util.getCurrentDateTime());
-		DateTime due_date = null;
-		if(request.getDueDate()!= null)
-			due_date = request.getDueDate();
-		ArrayList<String> tags = reminder_manager.getTags(reminder_str);
+		RequestResponse request_response = null;
 		
-		Reminder reminder = reminder_manager.addReminder(user, reminder_str, current_time, date_util.JodaDateTimeToSQLDateTime(due_date));
+		User user               = request.getUser();
+		String reminder_str     = request.getReminder();
+		String current_date_str = date_util.JodaDateTimeToSQLDateTime(date_util.getCurrentDateTime());
+		ArrayList<String> tags  = reminder_manager.getTags(reminder_str);
+		
+		String due_date_str = null;
+		try{ due_date_str = this.date_util.JodaDateTimeToSQLDateTime(request.getDueDate()); }catch(Exception e){}
+		
+		Reminder reminder = reminder_manager.addReminder(user, reminder_str, current_date_str, due_date_str);
+		
+		//REMINDER FAILED TO ADD
 		if(reminder == null){
 			System.out.println("request from " + request.getUsername() + " failed to add");
 			request_response = this.response_manager.unknownError();
+		
+		//REMINDER WAS SUCCESSFULLY ADDED
 		}else{
 			System.out.println("request from " + request.getUsername() + " was a success!");
 			reminder_manager.map_tags(reminder, tags);
@@ -82,20 +86,20 @@ public class RequestHandler {
 		DateTime created_date = request.getCreatedDate();
 		DateTime created_date_after = request.getCreatedDateAfter();
 		Integer reminder_id = request.getReminderId();
-		String complete = "1";
-		if(request.getComplete() == false)
-			complete = "0";
+		String complete = "0";
+		if(request.getComplete() != null && request.getComplete() == true)
+			complete = "1";
 		
 		ArrayList<Reminder> reminders = 
 				this.reminder_manager.getReminders(user, tags, due_date_before, due_date,
 						due_date_after, created_date_before, created_date, created_date_after,
 						reminder_id, complete);
 		
+		//MAX AMOUNT OF REMINDERS ALLOWED
 		if(reminders.size() >= 500)
 			return this.response_manager.tooManyRemindersFound();
-		System.out.println(reminders.size());
-		return this.response_manager.getRemindersSuccess(reminders);
 		
+		return this.response_manager.getRemindersSuccess(reminders);
 	}
 	
 	private RequestResponse handleUpdateReminderRequest(Request request){
@@ -105,6 +109,7 @@ public class RequestHandler {
 		DateTime due_date = request.getDueDate();
 		Boolean completed = request.getComplete();
 		Boolean deleted = request.getDeleted();
+		
 		Reminder reminder_obj = this.reminder_manager.updateReminder(reminder_id, reminder, due_date, completed, deleted);
 		if(reminder_obj == null)
 			return this.response_manager.unableToUpdateReminder();
@@ -117,7 +122,9 @@ public class RequestHandler {
 		String first = request.getFirstName();
 		String last = request.getLastName();
 		String email = request.getEmail();
-		this.user_manager.registerUser(username, email, first, last, password);
+		boolean success = this.user_manager.registerUser(username, email, first, last, password);
+		if(!success)
+			return this.response_manager.registerUserFailed();
 		return this.response_manager.registerUserSuccess();
 	}
 

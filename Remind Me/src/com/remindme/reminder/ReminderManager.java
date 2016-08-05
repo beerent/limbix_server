@@ -11,7 +11,6 @@ import com.remindme.user.UserManager;
 import com.remindme.util.DateUtil;
 
 public class ReminderManager {
-	private static final int REMINDER_MAX_LENGTH = 300;
 	private ReminderDAO reminder_dao;
 	private DateUtil date_util;
 
@@ -25,8 +24,6 @@ public class ReminderManager {
 	 * and return the arraylist.
 	 */
 	public ArrayList<String> getTags(String reminder){
-		if(reminder == null)
-			return null;
 		ArrayList<String> tags = new ArrayList<String>();
 		Scanner sc = new Scanner(reminder);
 		
@@ -41,9 +38,9 @@ public class ReminderManager {
 		return tags;
 	}
 	
-	public ArrayList<String> getTagsFromRequest(String tags){
-		if(tags == null)
-			return null;
+	public ArrayList<String> getStringsFromCommaDeliminatedString(String tags){
+		if(tags.equals("")) return new ArrayList<String>();
+		
 		String [] tags_array = tags.split(",");
 		ArrayList<String> ret_array = new ArrayList<String>();
 		for(String s : tags_array){
@@ -61,21 +58,10 @@ public class ReminderManager {
 		
 		String tags_string = tags.get(0);
 		for(int i = 1; i < tags.size(); i++){
-			tags_string += ", " + tags.get(i) ;
+			tags_string += ", " + tags.get(i);
 		}
 		
 		return tags_string;
-	}
-	
-	/*
-	 * returns true if the reminder is valid
-	 */
-	public boolean validateReminder(String reminder){
-		if(reminder == null) return false;
-		if(reminder.length() > REMINDER_MAX_LENGTH) return false; 
-		if(reminder.length() < 1) return false;
-		
-		return true;
 	}
 
 	/*
@@ -107,16 +93,21 @@ public class ReminderManager {
 	 * returns a Reminder object
 	 */
 	public Reminder getReminder(int reminder_id){
-		DateUtil date_util = new DateUtil();
-			
 		QueryResult result = this.reminder_dao.getReminder(reminder_id);
+		
 		//reminder_id, user_id, reminder, created, due_date, complete, deleted
+		
+		//can be null
+		String due_date_str = result.getElement(0, "due_date");
+		DateTime due_date = null;
+		try{ due_date = date_util.getDateTime(due_date_str); }catch(Exception e){};
+		
+		//cant be null
 		reminder_id = Integer.parseInt(result.getElement(0, "reminder_id"));
 		int user_id = Integer.parseInt(result.getElement(0, "user_id"));
 		User user = new UserManager().getUser(user_id);
 		String reminder = result.getElement(0, "reminder");
 		DateTime created = date_util.getDateTime(result.getElement(0, "created"));
-		DateTime due_date = date_util.getDateTime(result.getElement(0, "due_date"));
 		int complete_int = Integer.parseInt(result.getElement(0, "complete"));
 		boolean complete = complete_int == 1;
 		int deleted_int = Integer.parseInt(result.getElement(0, "deleted"));
@@ -149,37 +140,66 @@ public class ReminderManager {
 
 	public ArrayList<Reminder> getReminders(User user, ArrayList<String> tags, DateTime due_date_before, DateTime due_date,
 			DateTime due_date_after, DateTime created_date_before, DateTime created_date, DateTime created_date_after,
-			Integer reminder_id, String complete) {
-		QueryResult results = this.reminder_dao.getReminders(user.getUserId(),
-				getTagsCommaDelimited(tags), 
-				this.date_util.JodaDateTimeToSQLDateTime(due_date_before),
-				this.date_util.JodaDateTimeToSQLDateTime(due_date),
-				this.date_util.JodaDateTimeToSQLDateTime(due_date_after),
-				this.date_util.JodaDateTimeToSQLDateTime(created_date_before),
-				this.date_util.JodaDateTimeToSQLDateTime(created_date),
-				this.date_util.JodaDateTimeToSQLDateTime(created_date_after),
-				reminder_id, 
-				complete);
+			Integer reminder_id, String complete_str) {
+		
+		String tags_str = null;
+		String due_date_before_str = null;
+		String due_date_str = null;
+		String due_date_after_str = null;
+		String created_date_before_str = null;
+		String created_date_str = null;
+		String created_date_after_str = null;
+		Integer reminder_id_str = null;
+		
+		//optional fields
+		try{ tags_str = getTagsCommaDelimited(tags); }catch(Exception e){}
+		try{ due_date_before_str = this.date_util.JodaDateTimeToSQLDateTime(due_date_before); }catch(Exception e){}
+		try{ due_date_str = this.date_util.JodaDateTimeToSQLDateTime(due_date); }catch(Exception e){}
+		try{ due_date_after_str = this.date_util.JodaDateTimeToSQLDateTime(due_date_after); }catch(Exception e){}
+		try{ created_date_before_str = this.date_util.JodaDateTimeToSQLDateTime(created_date_before); }catch(Exception e){}
+		try{ created_date_str = this.date_util.JodaDateTimeToSQLDateTime(created_date); }catch(Exception e){}
+		try{ created_date_after_str = this.date_util.JodaDateTimeToSQLDateTime(created_date_after); }catch(Exception e){}
+		QueryResult results = this.reminder_dao.getReminders(
+				user.getUserId(),
+				tags_str, 
+				due_date_before_str,
+				due_date_str,
+				due_date_after_str,
+				created_date_before_str,
+				created_date_str,
+				created_date_after_str,
+				reminder_id_str, 
+				complete_str
+			);
 		
 		//int reminder_id, User user, String reminder, DateTime created, DateTime due_date,
 		//boolean complete, boolean deleted
 		
 		ArrayList<Reminder> reminders = new ArrayList<Reminder>();
-		boolean complete_bool = false;
-		boolean deleted = false;
+		Boolean complete = false;
+		Boolean deleted = false;
 
+		String reminder;
 		for(int i = 0; i < results.numRows(); i++){
-			complete_bool = results.getElement(i, "complete").equals("1");
-		
-			reminder_id = Integer.parseInt(results.getElement(i, "reminder_id"));
-			//user placeholder
-			String reminder = results.getElement(i, "reminder");
-			created_date = date_util.getDateTime(results.getElement(i, "created"));
-			due_date = date_util.getDateTime(results.getElement(i, "due_date"));
-			//complete_bool place holder
-			//deleted place holder
+			reminder_id = null;
+			due_date_str = null;
+			due_date = null;
+			created_date_str = null;
+			created_date = null;
+			reminder = null;
+			complete = null;
+			deleted = null;
 			
-			reminders.add(new Reminder(reminder_id, user, reminder, created_date, due_date, complete_bool, deleted));
+			reminder = results.getElement(i, "reminder");
+			created_date_str = results.getElement(i, "created");
+			due_date_str = results.getElement(i, "due_date");
+			try { reminder_id = Integer.parseInt(results.getElement(i, "reminder_id")); }catch(Exception e){e.printStackTrace();}
+			try { due_date = this.date_util.getDateTime(due_date_str); }catch(Exception e){}
+			try { created_date = this.date_util.getDateTime(created_date_str); }catch(Exception e){}
+			try { complete = results.getElement(i, "complete").equals("1"); }catch(Exception e){}
+			try { deleted = results.getElement(i, "deleted").equals("1"); }catch(Exception e){}
+			
+			reminders.add(new Reminder(reminder_id, user, reminder, created_date, due_date, complete, deleted));
 		}
 		return reminders;
 	}
@@ -198,15 +218,20 @@ public class ReminderManager {
 			if(!deleted)
 				deleted_str = "0";
 		}
+		
+		String due_date_str = null;
+		try{ due_date_str = this.date_util.JodaDateTimeToSQLDateTime(due_date); }catch(Exception e){}
+		
 		boolean result = this.reminder_dao.updateReminder(
 				reminder_id, 
 				reminder,
-				this.date_util.JodaDateTimeToSQLDateTime(due_date),
+				due_date_str,
 				complete_str,
 				deleted_str);
-		System.out.println("result: " + result);
-		if(result)
+		//if this worked and reminder not null aka tags potentially exist
+		if(result && reminder != null)
 			this.reminder_dao.updateTags(reminder_id, getTags(reminder));
+		
 		return getReminder(reminder_id);
 	}
 }

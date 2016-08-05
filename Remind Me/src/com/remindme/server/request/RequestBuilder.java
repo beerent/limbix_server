@@ -82,15 +82,19 @@ public class RequestBuilder {
 	private void buildAddReminderRequest(Request request, JSONObject json){
 		RequestType request_type = RequestType.add;
 		String reminder = (String) json.get("reminder");
-		ArrayList<String> tags = this.reminder_manager.getTags((String) json.get("reminder"));
-		DateTime due_date = this.date_util.getDateTime((String) json.get("due_date"));
-		DateTime created = this.date_util.getDateTime((String) json.get("current"));
+		String tags_str = (String) json.get("reminder");
+		String due_date_str = (String) json.get("due_date");
+		
+		ArrayList<String> tags = null;
+		DateTime due_date = null;
+		
+		try{ tags = this.reminder_manager.getTags(tags_str); }catch(Exception e){}
+		try{ due_date = this.date_util.getDateTime(due_date_str); }catch(Exception e){}
 		
 		request.setRequestType(request_type);
 		request.setReminder(reminder);
 		request.setTags(tags);
 		request.setDueDate(due_date);
-		request.setCreatedDate(created);
 	}
 	
 	/*
@@ -98,21 +102,35 @@ public class RequestBuilder {
 	 *  the request object.
 	 */
 	private void buildGetRemindersRequest(Request request, JSONObject json) {
-		RequestType request_type = RequestType.get;
-		ArrayList<String> tags = this.reminder_manager.getTagsFromRequest((String) json.get("tags"));
-		DateTime due_date_before = this.date_util.getDateTime((String) json.get("due_date_before"));
-		DateTime due_date = this.date_util.getDateTime((String) json.get("due_date"));
-		DateTime due_date_after = this.date_util.getDateTime((String) json.get("due_date_after"));
-		DateTime created_before = this.date_util.getDateTime((String) json.get("created_before"));
-		DateTime created = this.date_util.getDateTime((String) json.get("created"));
-		DateTime created_after = this.date_util.getDateTime((String) json.get("created_after"));
-		Integer reminder_id;
-		try{
-			reminder_id = Integer.parseInt((String) json.get("reminder_id"));
-		}catch(Exception e){
-			reminder_id = null;
-		}
-		Boolean complete = Boolean.valueOf((String) json.get("complete"));
+		RequestType request_type = RequestType.get;		
+		String tags_str = (String) json.get("tags");		
+		String due_date_before_str = (String) json.get("due_date_before");		
+		String due_date_str = (String) json.get("due_date");	
+		String due_date_after_str = (String) json.get("due_date_after");		
+		String created_before_str = (String) json.get("created_before");		
+		String created_str = (String) json.get("created");		
+		String created_after_str = (String) json.get("created_after");		
+		String complete_str = (String) json.get("complete");
+		
+		ArrayList<String> tags = null;
+		DateTime due_date_before = null;
+		DateTime due_date = null;
+		DateTime due_date_after = null;
+		DateTime created_before = null;
+		DateTime created = null;
+		DateTime created_after = null;
+		Integer reminder_id = null;
+		Boolean complete = null;
+		
+		try { tags = this.reminder_manager.getStringsFromCommaDeliminatedString(tags_str); }catch(Exception e){}
+		try { due_date_before = this.date_util.getDateTime(due_date_before_str); }catch(Exception e){}
+		try { due_date = this.date_util.getDateTime(due_date_str); }catch(Exception e){}
+		try { due_date_after = this.date_util.getDateTime(due_date_after_str); }catch(Exception e){}
+		try { created_before = this.date_util.getDateTime(created_before_str); }catch(Exception e){}
+		try { created = this.date_util.getDateTime(created_str); }catch(Exception e){}
+		try { created_after = this.date_util.getDateTime(created_after_str); }catch(Exception e){}
+		try { reminder_id = Integer.parseInt((String) json.get("reminder_id")); }catch(Exception e){}
+		try { complete = Integer.parseInt(complete_str) == 1; }catch(Exception e){}
 
 		request.setRequestType(request_type);
 		request.setTags(tags);
@@ -133,21 +151,23 @@ public class RequestBuilder {
 		String due_date_str = (String) json.get("due_date");
 		String complete_str = (String) json.get("complete");
 		String deleted_str = (String) json.get("deleted");
-				
+
+		Integer reminder_id = null;
+		DateTime due_date = null;
+		Boolean complete = null;
+		Boolean deleted = null;
+		
+		try{ reminder_id = Integer.parseInt(reminder_id_str); }catch(Exception e){}
+		try{ due_date = this.date_util.getDateTime(due_date_str); }catch(Exception e){}
+		try{ complete = complete_str.charAt(0) == '1'; }catch(Exception e){}
+		try{ deleted = deleted_str.charAt(0) == '1'; }catch(Exception e){}
+		
 		request.setRequestType(request_type);
-		
-		Integer reminder_id;
-		try{
-			reminder_id = Integer.parseInt(reminder_id_str);
-		}catch(Exception e){
-			reminder_id = null;
-		}
-		
 		request.setReminderId(reminder_id);
-		request.setReminder(reminder);
-		if(due_date_str != null) request.setDueDate(this.date_util.getDateTime(due_date_str));
-		if(complete_str != null) request.setComplete(complete_str.charAt(0) == '1');
-		if(deleted_str != null) request.setDeleted(deleted_str.charAt(0) == '1');
+		request.setReminder(reminder);		
+		request.setDueDate(due_date);
+		request.setComplete(complete);
+		request.setDeleted(deleted);
 	}
 	
 	private void buildRegisterUserRequest(Request request, JSONObject json){

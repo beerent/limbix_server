@@ -105,6 +105,9 @@ public class Request {
 	public String getEmail(){ return this.email; }
 	public void setEmail(String email) { this.email = email; }
 	
+	public void setDeleted(Boolean b) { this.deleted = b; }
+	public Boolean getDeleted(){ return this.deleted; }
+	
 	public void setTags(ArrayList<String> tags){
 		if(tags == null)
 			return;
@@ -140,8 +143,5 @@ public class Request {
 		retstr += "\ntags: " + tags;
 		return retstr;
 	}
-
-	public void setDeleted(boolean b) { this.deleted = b; }
-	public Boolean getDeleted(){ return this.deleted; }
 	
 }

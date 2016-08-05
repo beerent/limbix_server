@@ -120,7 +120,7 @@ public class ReminderDAO extends DAO{
 		}
 		sql += "where user_id = ? ";
 		if(tags != null){
-			tags_as_arraylist = reminder_manager.getTagsFromRequest(tags);
+			tags_as_arraylist = reminder_manager.getStringsFromCommaDeliminatedString(tags);
 			sql += "and tags.tag in (?";
 			for(int i = 1; i < tags_as_arraylist.size(); i++)
 				sql += ", ?";
@@ -205,21 +205,22 @@ public class ReminderDAO extends DAO{
 
 	public boolean updateReminder(int reminder_id, String reminder, String due_date,
 			String complete_str, String deleted_str) {
-		String sql = "update reminders set ";
+		String sql = "update reminders set reminder_id = ? ";
 		if(reminder != null)
-			sql += "reminder = ? ";
+			sql += ", reminder = ? ";
 		if(due_date != null)
-			sql += "due_date = ? ";
+			sql += ", due_date = ? ";
 		if(complete_str != null)
-			sql += "complete = ? ";
+			sql += ", complete = ? ";
 		if(deleted_str != null)
-			sql += "deleted = ? ";
+			sql += ", deleted = ? ";
 		sql += "where reminder_id = ?";
 		
 		try {
 			Connection connection = super.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			int i = 1;
+			statement.setInt(1, reminder_id);
+			int i = 2;
 			
 			if(reminder != null){
 				statement.setString(i, reminder);

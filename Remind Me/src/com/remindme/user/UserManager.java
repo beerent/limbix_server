@@ -141,8 +141,7 @@ public class UserManager{
 		return true;
 	}
 
-	public void registerUser(String username, String email, String first, String last, String password) {
-		this.user_dao.registerUser(username, email, first, last, password);
-		
+	public boolean  registerUser(String username, String email, String first, String last, String password) {
+		return this.user_dao.registerUser(username, email, first, last, password) > 0;
 	}
 }

@@ -164,12 +164,16 @@ public class ResponseManager {
 		return createErrorResponse("There was a problem updating your reminder.");
 	}
 	
-	public RequestResponse updateReminderSuccess() {
-		return createErrorResponse("Update to reminder was successful.");
+	public RequestResponse registerUserFailed() {
+		return createErrorResponse("There was a problem registering this account.");
 	}
 
 	public RequestResponse unknownError() {
 		return createErrorResponse("Request contains an unknown error. The error has been recorded.");
+	}
+	
+	public RequestResponse updateReminderSuccess() {
+		return createSuccessResponse("Update to reminder was successful.");
 	}
 	
 	public RequestResponse addReminderSuccess() {

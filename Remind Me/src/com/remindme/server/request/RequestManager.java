@@ -97,9 +97,12 @@ public class RequestManager {
 	} 
 
 	private RequestResponse verifyUpdateUserFields(Request request) {
-		if(request.getNewPassword1() != null && request.getPassword2() == null ||
-				request.getNewPassword2() != null && request.getNewPassword1() == null)
-			return this.response_manager.missingBothPasswords();
+		String pass1 = request.getNewPassword1();
+		String pass2 = request.getNewPassword2();
+		if(pass1 != null && pass2 == null)
+			return this.response_manager.missingSecondNewPassword();
+		if(pass2 != null && pass1 == null)
+			return this.response_manager.missingFirstNewPassword();
 		if(request.getNewFirstName() == null &&
 				request.getNewLastName() == null &&
 				request.getEmail() == null &&
@@ -153,12 +156,6 @@ public class RequestManager {
 		if(reminder == null)
 			return this.response_manager.reminderIdDoesNotExistForUser();
 		
-		/*
-		 * 		if(request.getReminder() == null && 
-				request.getDueDate() == null &&
-				request.getComplete() == null &&
-				request.getDeleted() == null)
-		 */
 		RequestResponse response = null;
 		
 		//if reminder string is invalid, return error

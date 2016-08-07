@@ -189,4 +189,12 @@ public class UserManager{
 			return response_manager.invalidName();
 		return null;
 	}
+
+	public User updateUser(User user, String new_username, String new_password, String new_email, String new_first,
+			String new_last) {
+		boolean success = this.user_dao.updateUser(user.getUserId(), new_username, new_email, new_first, new_last, new_password);
+		if(success)
+			return getUser(user.getUserId());
+		return null;
+	}
 }

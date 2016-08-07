@@ -25,6 +25,7 @@ public class Request {
 	private User user;
 	private String reminder;
 	private Integer reminder_id;
+	private Boolean remove_due_date;
 	private DateTime due_date;
 	private DateTime due_date_before;
 	private DateTime due_date_after;
@@ -131,6 +132,9 @@ public class Request {
 	
 	public void setDeleted(Boolean b) { this.deleted = b; }
 	public Boolean getDeleted(){ return this.deleted; }
+	
+	public void setRemoveDueDate() { this.remove_due_date = true; }
+	public Boolean getRemoveDueDate() { return this.remove_due_date; }
 	
 	public void setTags(ArrayList<String> tags){
 		if(tags == null)

@@ -203,12 +203,12 @@ public class ReminderDAO extends DAO{
 		return null;
 	}
 
-	public boolean updateReminder(int reminder_id, String reminder, String due_date,
+	public boolean updateReminder(int reminder_id, String reminder, String due_date, Boolean remove_due_date,
 			String complete_str, String deleted_str) {
 		String sql = "update reminders set reminder_id = ? ";
 		if(reminder != null)
 			sql += ", reminder = ? ";
-		if(due_date != null)
+		if(due_date != null || (remove_due_date != null && remove_due_date))
 			sql += ", due_date = ? ";
 		if(complete_str != null)
 			sql += ", complete = ? ";
@@ -229,6 +229,9 @@ public class ReminderDAO extends DAO{
 			
 			if(due_date != null){
 				statement.setString(i, due_date);
+				i++;
+			}else if(remove_due_date != null && remove_due_date){
+				statement.setNull(i, java.sql.Types.DATE);
 				i++;
 			}
 			

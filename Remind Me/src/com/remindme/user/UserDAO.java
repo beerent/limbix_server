@@ -69,4 +69,53 @@ public class UserDAO extends DAO{
 		return -1;
 	}
 
+	public boolean updateUser(int user_id, String new_username, String new_email, String new_first, String new_last,
+			String new_password) {
+		String sql = "update users set user_id = ? ";
+		if(new_username != null) sql += ", username = ? ";
+		if(new_email != null) sql += ", email = ? ";
+		if(new_first != null) sql += ", first_name = ? ";
+		if(new_last != null) sql += ", last_name = ? ";
+		if(new_password != null)  sql += ", pw_hash = ? ";
+		sql += "where user_id = ?";
+		
+		try{
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, user_id);
+			int i = 2;
+			
+			if(new_username != null){
+				statement.setString(i, new_username);
+				i++;
+			}
+			
+			if(new_email != null){
+				statement.setString(i, new_email);
+				i++;
+			}
+			
+			if(new_first != null){
+				statement.setString(i, new_first);
+				i++;
+			}
+			
+			if(new_last != null){
+				statement.setString(i, new_last);
+				i++;
+			}
+			
+			if(new_password != null){
+				statement.setString(i, new_password);
+				i++;
+			}
+			statement.setInt(i, user_id);
+			System.out.println(statement);
+			return executeUpdate(connection, statement);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }

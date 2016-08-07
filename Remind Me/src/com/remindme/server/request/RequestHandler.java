@@ -38,9 +38,10 @@ public class RequestHandler {
 		RequestResponse request_response = null;
 		RequestType request_type = request.getRequestType();
 		if(request_type == RequestType.add) request_response = handleAddReminderRequest(request);
-		if(request_type == RequestType.get) request_response = handleGetRemindersRequest(request);
-		if(request_type == RequestType.update_reminder) request_response = handleUpdateReminderRequest(request);
-		if(request_type == RequestType.register_user) request_response = handleRegisterUserRequest(request);
+		else if(request_type == RequestType.get) request_response = handleGetRemindersRequest(request);
+		else if(request_type == RequestType.update_reminder) request_response = handleUpdateReminderRequest(request);
+		else if(request_type == RequestType.register_user) request_response = handleRegisterUserRequest(request);
+		else if(request_type == RequestType.update_user) request_response = handleUpdateUserRequest(request);
 		
 		return request_response;
 	}
@@ -107,10 +108,11 @@ public class RequestHandler {
 		int reminder_id = request.getReminderId();
 		String reminder = request.getReminder();
 		DateTime due_date = request.getDueDate();
+		Boolean remove_due_date = request.getRemoveDueDate();
 		Boolean completed = request.getComplete();
 		Boolean deleted = request.getDeleted();
 		
-		Reminder reminder_obj = this.reminder_manager.updateReminder(reminder_id, reminder, due_date, completed, deleted);
+		Reminder reminder_obj = this.reminder_manager.updateReminder(reminder_id, reminder, due_date, remove_due_date, completed, deleted);
 		if(reminder_obj == null)
 			return this.response_manager.unableToUpdateReminder();
 		return this.response_manager.updateReminderSuccess();
@@ -126,6 +128,19 @@ public class RequestHandler {
 		if(!success)
 			return this.response_manager.registerUserFailed();
 		return this.response_manager.registerUserSuccess();
+	}
+	
+	private RequestResponse handleUpdateUserRequest(Request request) {
+		String new_username = request.getNewUsername();
+		String new_password = request.getNewPassword1();
+		String new_email = request.getNewEmail();
+		String new_first = request.getNewFirstName();
+		String new_last = request.getNewLastName();
+		
+		User user = this.user_manager.updateUser(request.getUser(), new_username, new_password, new_email, new_first, new_last);
+		if(user == null)
+			return this.response_manager.unableToUpdateUser();
+		return this.response_manager.updateUserSuccess();
 	}
 
 }

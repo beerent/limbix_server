@@ -204,8 +204,8 @@ public class ReminderManager {
 		return reminders;
 	}
 
-	public Reminder updateReminder(int reminder_id, String reminder, DateTime due_date, Boolean complete,
-			Boolean deleted) {
+	public Reminder updateReminder(int reminder_id, String reminder, DateTime due_date, Boolean remove_due_date,
+			Boolean complete, Boolean deleted) {
 		String complete_str = null;
 		if(complete != null){
 			complete_str = "1";
@@ -226,6 +226,7 @@ public class ReminderManager {
 				reminder_id, 
 				reminder,
 				due_date_str,
+				remove_due_date,
 				complete_str,
 				deleted_str);
 		//if this worked and reminder not null aka tags potentially exist

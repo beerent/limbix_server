@@ -164,12 +164,20 @@ public class ResponseManager {
 		return createErrorResponse("There was a problem updating your reminder.");
 	}
 	
+	public RequestResponse unableToUpdateUser() {
+		return createErrorResponse("There was a problem updating your user profile.");
+	}
+	
 	public RequestResponse registerUserFailed() {
 		return createErrorResponse("There was a problem registering this account.");
 	}
 	
-	public RequestResponse missingBothPasswords() {
-		return createErrorResponse("New password must be entered both times to update it.");
+	public RequestResponse missingSecondNewPassword() {
+		return createErrorResponse("Request is missing second new password to update password.");
+	}
+	
+	public RequestResponse missingFirstNewPassword() {
+		return createErrorResponse("Request is missing first new password to update password.");
 	}
 	
 	public RequestResponse nameTooShort() {
@@ -188,6 +196,9 @@ public class ResponseManager {
 		return createErrorResponse("Request contains an unknown error. The error has been recorded.");
 	}
 	
+	public RequestResponse updateUserSuccess() {
+		return createSuccessResponse("Update to user profile was successful");
+	}
 	public RequestResponse updateReminderSuccess() {
 		return createSuccessResponse("Update to reminder was successful.");
 	}
@@ -246,4 +257,6 @@ public class ResponseManager {
 		jo.put("response", response);
 		return new RequestResponse(jo);
 	}
+
+
 }

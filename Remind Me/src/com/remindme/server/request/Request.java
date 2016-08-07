@@ -10,10 +10,18 @@ import com.remindme.user.User;
 
 public class Request {
 	private String first_name;
+	private String first_name_new;
 	private String last_name;
+	private String last_name_new;
 	private RequestType request_type;
 	private String username;
+	private String username_new;
 	private String password;
+	private String password2;
+	private String password1_new;
+	private String password2_new;
+	private String email;
+	private String email_new;
 	private User user;
 	private String reminder;
 	private Integer reminder_id;
@@ -29,8 +37,6 @@ public class Request {
 	
 	private boolean contains_required_fields;
 	private boolean confirmed_fields;
-	private String password2;
-	private String email;
 	
 	public Request(){
 		this.tags = new ArrayList<String>();
@@ -60,8 +66,20 @@ public class Request {
 	public void setUsername(String username){ this.username = username; }
 	public String getUsername(){ return this.username; }
 	
+	public void setNewUsername(String username_new) { this.username_new = username_new; }
+	public String getNewUsername(){ return this.username_new; }
+	
 	public void setPassword(String password){ this.password = password; }
 	public String getPassword(){ return this.password; }
+	
+	public void setNewPassword1(String password1_new) { this.password1_new = password1_new; }
+	public String getNewPassword1(){ return this.password1_new; }
+	
+	public void setNewPassword2(String password2_new) { this.password2_new = password2_new; }
+	public String getNewPassword2(){ return this.password2_new; }
+	
+	public String getPassword2(){ return this.password2; }
+	public void setPassword2(String password2) { this.password2 = password2; }
 	
 	public void setReminder(String reminder) { this.reminder = reminder; }
 	public String getReminder() { return this.reminder; }
@@ -93,17 +111,23 @@ public class Request {
 	public DateTime getCreatedDateAfter() { return created_date_after; }
 	public void setCreatedDateAfter(DateTime created_date_after) { this.created_date_after = created_date_after; }
 	
-	public String getPassword2(){ return this.password2; }
-	public void setPassword2(String password2) { this.password2 = password2; }
-	
 	public String getFirstName(){ return this.first_name; }
 	public void setFirstName(String first_name) { this.first_name = first_name; }
+	
+	public void setNewFirstName(String first_name_new) {  this.first_name_new = first_name_new; }
+	public String getNewFirstName(){  return this.first_name_new; }
 	
 	public String getLastName(){ return this.last_name; }
 	public void setLastName(String last_name) { this.last_name = last_name; }
 	
+	public void setNewLastName(String last_name_new) { this.last_name_new = last_name_new; }	
+	public String getNewLastName() { return this.last_name_new; }
+	
 	public String getEmail(){ return this.email; }
 	public void setEmail(String email) { this.email = email; }
+	
+	public void setNewEmail(String email_new) { this.email_new = email_new; }
+	public String getNewEmail(){ return this.email_new; };
 	
 	public void setDeleted(Boolean b) { this.deleted = b; }
 	public Boolean getDeleted(){ return this.deleted; }
@@ -143,5 +167,4 @@ public class Request {
 		retstr += "\ntags: " + tags;
 		return retstr;
 	}
-	
 }

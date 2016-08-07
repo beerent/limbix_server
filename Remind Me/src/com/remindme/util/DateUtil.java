@@ -11,11 +11,15 @@ public class DateUtil {
 	public DateTime getDateTime(String s){
 		if(s.contains(".0"))
 			s = s.substring(0, s.lastIndexOf(".0"));
-		
-		DateTimeFormatter formatter = getDateTimeFormatter();
-		DateTime dt = formatter.parseDateTime(s);
-
-		return dt;
+		try{
+			DateTimeFormatter formatter = getDateTimeFormatter();
+			DateTime dt = formatter.parseDateTime(s);
+			return dt;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+			
+		return null;
 	}
 	
 	public String JodaDateTimeToSQLDateTime(DateTime date_time){

@@ -77,9 +77,12 @@ public class RequestBuilder {
 		// REGISTER USER REQUEST
 		else if(type.equals("register_user")) buildRegisterUserRequest(request, json);
 		
+		//UPDATE USER
+		else if(type.equals("update_user")) buildUpdateUserRequest(request, json);
+		
 		return request;
 	}
-	
+
 	/*
 	 * Adds the appropriate fields for an ADD REMINDER request to 
 	 * the request object.
@@ -191,6 +194,24 @@ public class RequestBuilder {
 		request.setFirstName(first_name);
 		request.setLastName(last_name);
 		request.setEmail(email);
+	}
+	
+	private void buildUpdateUserRequest(Request request, JSONObject json) {
+		RequestType request_type = RequestType.update_user;
+		String username_new = (String) json.get("username_new");
+		String password1_new = (String) json.get("password_new");
+		String password2_new = (String) json.get("password2_new");
+		String first_name_new = (String) json.get("first_name_new");
+		String last_name_new = (String) json.get("last_name_new");
+		String email_new = (String) json.get("email_new");
+			
+		request.setRequestType(request_type);
+		request.setNewUsername(username_new);
+		request.setNewPassword1(password1_new);
+		request.setNewPassword2(password2_new);
+		request.setNewFirstName(first_name_new);
+		request.setNewLastName(last_name_new);
+		request.setNewEmail(email_new);
 	}
 	
 	

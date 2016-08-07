@@ -53,12 +53,12 @@ public class RequestManager {
 	}
 
 	public RequestResponse verifyRequestFields(Request request) {
-		RequestResponse response;		
 		RequestType type = request.getRequestType();
 		if(type == RequestType.add) return verifyAddReminderRequestFields(request);
 		else if(type == RequestType.get) return verifyGetRemindersRequestFields(request);
 		else if(type == RequestType.update_reminder) return verifyUpdateReminderRequestFields(request);
 		else if(type == RequestType.register_user) return verifyRegisterUserFields(request);
+		else if(type == RequestType.update_user) return verifyUpdateUserFields(request);
 		else return response_manager.invalidRequestType();
 	}
 
@@ -94,6 +94,17 @@ public class RequestManager {
 		if(request.getLastName() == null) return response_manager.missingLastName();
 		if(request.getEmail() == null) return response_manager.missingEmail();
 		return null;
+	} 
+
+	private RequestResponse verifyUpdateUserFields(Request request) {
+		if(request.getNewFirstName() == null &&
+				request.getNewLastName() == null &&
+				request.getEmail() == null &&
+				request.getNewPassword1() == null &&
+				request.getNewPassword2() == null &&
+				request.getNewUsername() == null)
+			return this.response_manager.nothingToUpdate();
+		return null;
 	}
 	
 	
@@ -116,6 +127,7 @@ public class RequestManager {
 		if(request.getRequestType() == RequestType.get) return confirmGetRemindersFields(request);
 		if(request.getRequestType() == RequestType.update_reminder) return confirmUpdateReminderFields(request);
 		if(request.getRequestType() == RequestType.register_user) return confirmRegisterUserFields(request);
+		if(request.getRequestType() == RequestType.update_user) return confirmUpdateUserFields(request);
 	
 		return response_manager.unknownError();
 	}
@@ -174,49 +186,27 @@ public class RequestManager {
 	}
 	
 	private RequestResponse confirmRegisterUserFields(Request request) {
+		RequestResponse response;
 		
 		//verify username
 		String username = request.getUsername();
-		if(!this.user_manager.usernameLongEnough(username))
-			return this.response_manager.usernameTooShort();
-		if(!this.user_manager.usernameShortEnough(username))
-			return this.response_manager.usernameTooLong();
-		if(!this.user_manager.usernameValidCharacters(username))
-			return this.response_manager.invalidUsername();	
-		if(!this.user_manager.containsAlpha(username))
-			return this.response_manager.usernameMissingAlphaCharacter();
-		if(this.user_manager.usernameExists(username))
-			return this.response_manager.usernameAlreadyExists();
+		response = this.user_manager.confirmUsername(username);
+		if (response != null)
+			return response;
 			
 		//verify passwords
 		String password = request.getPassword();
 		String password2 = request.getPassword2();
-		if(!this.user_manager.passwordsMatch(password, password2))
-			return this.response_manager.passwordsDoNotMatch();
-		if(!this.user_manager.passwordLongEnough(password))
-			return this.response_manager.passwordTooShort();
-		if(!this.user_manager.passwordShortEnough(password))
-			return this.response_manager.passwordTooLong();
-		if(!this.user_manager.containsAlpha(password))
-			return this.response_manager.passwordMissingAlphaCharacter();
-		if(!this.user_manager.containsNumeric(password))
-			return this.response_manager.passwordMissingNumericCharacter();
+		response = this.user_manager.confirmPasswords(password, password2);
+		if(response != null)
+			return response;
 		
 		//verify first and last name
 		String first_name = request.getFirstName();
 		String last_name = request.getFirstName();
-		if(!this.user_manager.firstLastNameLongEnough(first_name))
-			return this.response_manager.firstNameTooShort();
-		if(!this.user_manager.firstLastNameLongEnough(last_name))
-			return this.response_manager.lastNameTooShort();
-		if(!this.user_manager.firstLastNameShortEnough(first_name))
-			return this.response_manager.firstNameTooLong();
-		if(!this.user_manager.firstLastNameShortEnough(last_name))
-			return this.response_manager.lastNameTooLong();
-		if(!this.user_manager.validFirstOrLastName(first_name))
-			return this.response_manager.invalidFirstName();
-		if(!this.user_manager.validFirstOrLastName(last_name))
-			return this.response_manager.invalidLastName();		
+		response = this.user_manager.verifyFirstAndLastName(first_name, last_name);
+		if(response != null)
+			return response;
 		
 		//verify email
 		String email = request.getEmail();
@@ -224,6 +214,24 @@ public class RequestManager {
 			return this.response_manager.invalidEmail();
 		
 		return null;
+	}
+	
+	private RequestResponse confirmUpdateUserFields(Request request){
+		RequestResponse response;
+		
+		String username = request.getNewUsername();
+		if(username != null){
+			response = this.user_manager.confirmUsername(username);
+			if (response != null)
+				return response;
+		}
+		
+		String new_password1 = request.getNewPassword1();
+		String new_password2 = request.getNewPassword2();
+		if(new_password1)
+		
+		String new_email = request.getNewEmail();
+		String 
 	}
 	
 }

@@ -1,6 +1,8 @@
 package com.remindme.user;
 
 import com.remindme.database.QueryResult;
+import com.remindme.server.response.RequestResponse;
+import com.remindme.server.response.ResponseManager;
 
 public class UserManager{
 	private UserDAO user_dao;
@@ -143,5 +145,52 @@ public class UserManager{
 
 	public boolean  registerUser(String username, String email, String first, String last, String password) {
 		return this.user_dao.registerUser(username, email, first, last, password) > 0;
+	}
+
+	public RequestResponse confirmUsername(String username) {
+		ResponseManager response_manager = new ResponseManager();
+		if(!usernameLongEnough(username))
+			return response_manager.usernameTooShort();
+		if(!usernameShortEnough(username))
+			return response_manager.usernameTooLong();
+		if(!usernameValidCharacters(username))
+			return response_manager.invalidUsername();	
+		if(!containsAlpha(username))
+			return response_manager.usernameMissingAlphaCharacter();
+		if(usernameExists(username))
+			return response_manager.usernameAlreadyExists();
+		return null;
+	}
+
+	public RequestResponse confirmPasswords(String password, String password2) {
+		ResponseManager response_manager = new ResponseManager();
+		if(!passwordsMatch(password, password2))
+			return response_manager.passwordsDoNotMatch();
+		if(!passwordLongEnough(password))
+			return response_manager.passwordTooShort();
+		if(!passwordShortEnough(password))
+			return response_manager.passwordTooLong();
+		if(!containsAlpha(password))
+			return response_manager.passwordMissingAlphaCharacter();
+		if(!containsNumeric(password))
+			return response_manager.passwordMissingNumericCharacter();
+		return null;
+	}
+
+	public RequestResponse verifyFirstAndLastName(String first_name, String last_name) {
+		ResponseManager response_manager = new ResponseManager();
+		if(!firstLastNameLongEnough(first_name))
+			return response_manager.firstNameTooShort();
+		if(!firstLastNameLongEnough(last_name))
+			return response_manager.lastNameTooShort();
+		if(!firstLastNameShortEnough(first_name))
+			return response_manager.firstNameTooLong();
+		if(!firstLastNameShortEnough(last_name))
+			return response_manager.lastNameTooLong();
+		if(!validFirstOrLastName(first_name))
+			return response_manager.invalidFirstName();
+		if(!validFirstOrLastName(last_name))
+			return response_manager.invalidLastName();	
+		return null;
 	}
 }

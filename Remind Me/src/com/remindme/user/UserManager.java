@@ -5,11 +5,13 @@ import com.remindme.server.response.RequestResponse;
 import com.remindme.server.response.ResponseManager;
 
 public class UserManager{
+	private ResponseManager response_manager;
 	private UserDAO user_dao;
 	
 
 	public UserManager(){
 		this.user_dao = new UserDAO();
+		this.response_manager = new ResponseManager();
 	}
 	
 	//user_id, username, email, first_name, last_name, pw_hash
@@ -132,15 +134,18 @@ public class UserManager{
 		return true;
 	}
 
-	public boolean validEmail(String email) {
+	public RequestResponse validEmail(String email) {
+		boolean valid = true;
 		if(!email.contains("@"))
-			return false;
+			valid = false;
 		if(!email.contains("."))
-			return false;
+			valid = false;
 		
 		if(email.length() < 5 || email.length() >= 256)
-			return false;
-		return true;
+			valid = false;
+		if(valid == false)
+			return this.response_manager.invalidEmail();
+		return null;
 	}
 
 	public boolean  registerUser(String username, String email, String first, String last, String password) {
@@ -148,7 +153,6 @@ public class UserManager{
 	}
 
 	public RequestResponse confirmUsername(String username) {
-		ResponseManager response_manager = new ResponseManager();
 		if(!usernameLongEnough(username))
 			return response_manager.usernameTooShort();
 		if(!usernameShortEnough(username))
@@ -163,7 +167,6 @@ public class UserManager{
 	}
 
 	public RequestResponse confirmPasswords(String password, String password2) {
-		ResponseManager response_manager = new ResponseManager();
 		if(!passwordsMatch(password, password2))
 			return response_manager.passwordsDoNotMatch();
 		if(!passwordLongEnough(password))
@@ -177,20 +180,13 @@ public class UserManager{
 		return null;
 	}
 
-	public RequestResponse verifyFirstAndLastName(String first_name, String last_name) {
-		ResponseManager response_manager = new ResponseManager();
-		if(!firstLastNameLongEnough(first_name))
-			return response_manager.firstNameTooShort();
-		if(!firstLastNameLongEnough(last_name))
-			return response_manager.lastNameTooShort();
-		if(!firstLastNameShortEnough(first_name))
-			return response_manager.firstNameTooLong();
-		if(!firstLastNameShortEnough(last_name))
-			return response_manager.lastNameTooLong();
-		if(!validFirstOrLastName(first_name))
-			return response_manager.invalidFirstName();
-		if(!validFirstOrLastName(last_name))
-			return response_manager.invalidLastName();	
+	public RequestResponse verifyName(String name) {
+		if(!firstLastNameLongEnough(name))
+			return response_manager.nameTooShort();
+		if(!firstLastNameShortEnough(name))
+			return response_manager.nameTooLong();
+		if(!validFirstOrLastName(name))
+			return response_manager.invalidName();
 		return null;
 	}
 }

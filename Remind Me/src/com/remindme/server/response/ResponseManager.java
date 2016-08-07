@@ -167,7 +167,23 @@ public class ResponseManager {
 	public RequestResponse registerUserFailed() {
 		return createErrorResponse("There was a problem registering this account.");
 	}
+	
+	public RequestResponse missingBothPasswords() {
+		return createErrorResponse("New password must be entered both times to update it.");
+	}
+	
+	public RequestResponse nameTooShort() {
+		return createErrorResponse("Invalid first or last name. must have at least 1 character.");
+	}
+	
+	public RequestResponse nameTooLong() {
+		return createErrorResponse("Invalid first or last name. must have at most 50 characters.");
+	}
 
+	public RequestResponse invalidName() {
+		return createErrorResponse("Name is invalid. Characters must be alphanumeric or the characters '_' and '-'.");
+	}
+	
 	public RequestResponse unknownError() {
 		return createErrorResponse("Request contains an unknown error. The error has been recorded.");
 	}

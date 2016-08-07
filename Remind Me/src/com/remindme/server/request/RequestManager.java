@@ -97,6 +97,9 @@ public class RequestManager {
 	} 
 
 	private RequestResponse verifyUpdateUserFields(Request request) {
+		if(request.getNewPassword1() != null && request.getPassword2() == null ||
+				request.getNewPassword2() != null && request.getNewPassword1() == null)
+			return this.response_manager.missingBothPasswords();
 		if(request.getNewFirstName() == null &&
 				request.getNewLastName() == null &&
 				request.getEmail() == null &&
@@ -204,16 +207,18 @@ public class RequestManager {
 		//verify first and last name
 		String first_name = request.getFirstName();
 		String last_name = request.getFirstName();
-		response = this.user_manager.verifyFirstAndLastName(first_name, last_name);
+		response = this.user_manager.verifyName(first_name);
+		if(response != null)
+			return response;
+		response = this.user_manager.verifyName(last_name);
 		if(response != null)
 			return response;
 		
 		//verify email
 		String email = request.getEmail();
-		if(!this.user_manager.validEmail(email))
-			return this.response_manager.invalidEmail();
+		response = this.user_manager.validEmail(email);
 		
-		return null;
+		return response;
 	}
 	
 	private RequestResponse confirmUpdateUserFields(Request request){
@@ -228,10 +233,33 @@ public class RequestManager {
 		
 		String new_password1 = request.getNewPassword1();
 		String new_password2 = request.getNewPassword2();
-		if(new_password1)
+		if(new_password1 != null && new_password2 != null){
+			response = this.user_manager.confirmPasswords(new_password1, new_password2);
+			if(response != null)
+				return response;
+		}
 		
 		String new_email = request.getNewEmail();
-		String 
+		if(new_email != null){
+			response = this.user_manager.validEmail(new_email);
+			if(response != null)
+				return response;
+		}
+		
+		String new_first = request.getNewFirstName();
+		String new_last = request.getNewLastName();
+		if(new_first != null ){
+			response = this.user_manager.verifyName(new_first);
+			if (response != null)
+				return response;
+		}
+		if(new_last != null ){
+			response = this.user_manager.verifyName(new_first);
+			if (response != null)
+				return response;
+		}
+		
+		return null;
 	}
 	
 }

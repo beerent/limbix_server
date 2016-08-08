@@ -3,10 +3,12 @@ package com.remindme.database;
 import java.sql.*;
 import java.util.ArrayList;
 
+import com.remindme.server.PropertiesManager;
+
 public class DAO{
-	private static final String DB_URL = "jdbc:mysql://localhost/remindme?useSSL=false";
-	private static final String password = "root";
-	private static final String username = "root";
+	private static final String DB_URL = PropertiesManager.getInstance().getProperty("db_string");
+	private static final String PASSWORD = PropertiesManager.getInstance().getProperty("db_user");
+	private static final String USERNAME = PropertiesManager.getInstance().getProperty("db_password");
 
 
 	public DAO(){
@@ -17,8 +19,11 @@ public class DAO{
 	 */
 	public Connection getConnection(){
 		try{
+			System.out.println(DB_URL);
+			System.out.println(USERNAME);
+			System.out.println(PASSWORD);
 			Class.forName("com.mysql.jdbc.Driver");
-			return DriverManager.getConnection(DB_URL, DAO.username, DAO.password);
+			return DriverManager.getConnection(DB_URL, DAO.USERNAME, DAO.PASSWORD);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

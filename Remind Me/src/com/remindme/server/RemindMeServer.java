@@ -7,7 +7,7 @@ import java.net.Socket;
 public class RemindMeServer {
 	public static void main(String[] args) {
 		try {
-			ServerSocket server_socket = new ServerSocket(1313);
+			ServerSocket server_socket = new ServerSocket(PropertiesManager.getInstance().getPropertyInteger("server_port"));
 			
 			Socket socket;
 			while(true){

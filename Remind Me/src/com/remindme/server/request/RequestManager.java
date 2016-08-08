@@ -9,13 +9,11 @@ import com.remindme.user.UserManager;
 public class RequestManager {
 	private ResponseManager response_manager;
 	private ReminderManager reminder_manager;
-	private RequestValidator request_validator;
 	private UserManager user_manager;
 	
 	public RequestManager(){
 		this.reminder_manager = new ReminderManager();
 		this.response_manager = new ResponseManager();
-		this.request_validator = new RequestValidator();
 		this.user_manager     = new UserManager();
 	}
 	
@@ -143,7 +141,7 @@ public class RequestManager {
 	//reminder
 	private RequestResponse confirmAddReminderFields(Request request){		
 		String reminder = request.getReminder();
-		return this.request_validator.validateReminderString(reminder);
+		return this.reminder_manager.validateReminderString(reminder);
 	}
 
 	private RequestResponse confirmGetRemindersFields(Request request) {
@@ -160,25 +158,25 @@ public class RequestManager {
 		
 		//if reminder string is invalid, return error
 		if(request.getReminder() != null)
-			response = this.request_validator.validateReminderString(reminder.toString());
+			response = this.reminder_manager.validateReminderString(reminder.toString());
 		if(response != null)
 			return response;
 		
 		//if reminder due date is invalid, return error
 		if(request.getDueDate() != null)
-			response = this.request_validator.validateDueDate(reminder.getDueDate());
+			response = this.reminder_manager.validateDueDate(reminder.getDueDate());
 		if(response != null)
 			return response;
 		
 		//if reminder complete is not valid, return error
 		if(request.getComplete() != null)
-			response = this.request_validator.validateComplete(reminder.isComplete());
+			response = this.reminder_manager.validateComplete(reminder.isComplete());
 		if(response != null)
 			return response;
 		
 		//if reminder deleted is not valid, return error
 		if(request.getDeleted() != null)
-			response = this.request_validator.validateDeleted(reminder.isDeleted());
+			response = this.reminder_manager.validateDeleted(reminder.isDeleted());
 		if(response != null)
 			return response;
 		

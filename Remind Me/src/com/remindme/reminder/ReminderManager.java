@@ -6,16 +6,22 @@ import java.util.Scanner;
 import org.joda.time.DateTime;
 
 import com.remindme.database.QueryResult;
+import com.remindme.server.response.RequestResponse;
+import com.remindme.server.response.ResponseManager;
 import com.remindme.user.User;
 import com.remindme.user.UserManager;
 import com.remindme.util.DateUtil;
 
 public class ReminderManager {
+	private static final int REMINDER_MAX_LENGTH = 300;
+	
 	private ReminderDAO reminder_dao;
+	private ResponseManager response_manager;
 	private DateUtil date_util;
 
 	public ReminderManager(){
 		this.reminder_dao = new ReminderDAO();
+		this.response_manager = new ResponseManager();
 		this.date_util = new DateUtil();
 	}
 	
@@ -234,5 +240,24 @@ public class ReminderManager {
 			this.reminder_dao.updateTags(reminder_id, getTags(reminder));
 		
 		return getReminder(reminder_id);
+	}
+	
+	public RequestResponse validateReminderString(String reminder) {
+		if(reminder == null) return this.response_manager.missingReminder();
+		if(reminder.length() > REMINDER_MAX_LENGTH) this.response_manager.reminderTooLong();
+		if(reminder.length() < 1) return this.response_manager.reminderTooShort();
+		return null;
+	}
+
+	public RequestResponse validateDueDate(DateTime due_date) {
+		return null;
+	}
+
+	public RequestResponse validateComplete(boolean complete) {
+		return null;
+	}
+
+	public RequestResponse validateDeleted(boolean deleted) {
+		return null;
 	}
 }

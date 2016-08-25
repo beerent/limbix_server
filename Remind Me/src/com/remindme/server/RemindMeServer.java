@@ -10,8 +10,10 @@ public class RemindMeServer {
 			ServerSocket server_socket = new ServerSocket(PropertiesManager.getInstance().getPropertyInteger("server_port"));
 			
 			Socket socket;
+			System.out.println("server started");
 			while(true){
 				socket = server_socket.accept();
+				System.out.println("connection accepted");
 				new ConnectionHandler(socket).start();
 			}
 		} catch (IOException e) {

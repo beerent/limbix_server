@@ -3,7 +3,8 @@
 	<classpathentry kind="src" path="Remind Me/src"/>
 	<classpathentry kind="src" path="Remind Me/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/bryczak/Downloads/joda-time-2.4/joda-time-2.4.jar"/>
-	<classpathentry kind="lib" path="/home/bryczak/Downloads/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/brent/Downloads/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/brent/Downloads/mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar"/>
+	<classpathentry kind="lib" path="/Users/brent/Downloads/joda-time-2.4/joda-time-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,11 +1,12 @@
 package com.remindme.server.request;
 
 public enum RequestType {
+	login,
 	add,
 	get,
 	update_reminder,
 	register_user, 
-	update_user ;
+	update_user;
 
 	/* RETURNS TRUE IF REQUEST TYPE A PRE LOGIN REQUEST */
 	public static boolean isPreLoginRequest(RequestType request_type) {

@@ -37,13 +37,18 @@ public class RequestHandler {
 		
 		RequestResponse request_response = null;
 		RequestType request_type = request.getRequestType();
-		if(request_type == RequestType.add) request_response = handleAddReminderRequest(request);
+		if(request_type == RequestType.login) request_response = handleLoginRequest(request);
+		else if(request_type == RequestType.add) request_response = handleAddReminderRequest(request);
 		else if(request_type == RequestType.get) request_response = handleGetRemindersRequest(request);
 		else if(request_type == RequestType.update_reminder) request_response = handleUpdateReminderRequest(request);
 		else if(request_type == RequestType.register_user) request_response = handleRegisterUserRequest(request);
 		else if(request_type == RequestType.update_user) request_response = handleUpdateUserRequest(request);
 		
 		return request_response;
+	}
+	
+	private RequestResponse handleLoginRequest(Request request){
+		return this.response_manager.loginUserSuccess();
 	}
 
 	/*

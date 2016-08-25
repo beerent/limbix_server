@@ -211,6 +211,10 @@ public class ResponseManager {
 		return createSuccessResponse("User has successfully registered.");
 	}
 	
+	public RequestResponse loginUserSuccess() {
+		return createSuccessResponse("User has successfully logged in.");
+	}
+	
 	public RequestResponse getRemindersSuccess(ArrayList<Reminder> reminders){
 		return new RequestResponse(getRemindersJSON(reminders));
 	}
@@ -243,6 +247,7 @@ public class ResponseManager {
 	@SuppressWarnings("unchecked")
 	private RequestResponse createSuccessResponse(String message){
 		JSONObject response = new JSONObject();
+		response.put("op", 1);
 		response.put("success", message);
 		JSONObject jo = new JSONObject();
 		jo.put("response", response);
@@ -252,6 +257,7 @@ public class ResponseManager {
 	@SuppressWarnings("unchecked")
 	private RequestResponse createErrorResponse(String error){
 		JSONObject response = new JSONObject();
+		response.put("op", 0);
 		response.put("error", error);
 		JSONObject jo = new JSONObject();
 		jo.put("response", response);

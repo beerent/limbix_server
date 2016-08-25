@@ -65,7 +65,8 @@ public class RequestBuilder {
 		/**********************************************************
 		 *       IDENTIFY THE REQUEST AND RETURN THE OBJECT       *     
 		 **********************************************************/
-		
+		// LOGIN REQUEST
+		if(type.equals("login")) buildLoginUserRequest(request, json);
 		// ADD REMINDER REQUEST
 		if(type.equals("add")) buildAddReminderRequest(request, json);
 		
@@ -82,6 +83,11 @@ public class RequestBuilder {
 		else if(type.equals("update_user")) buildUpdateUserRequest(request, json);
 		
 		return request;
+	}
+	
+	private void buildLoginUserRequest(Request request, JSONObject json){
+		RequestType request_type = RequestType.login;
+		request.setRequestType(request_type);
 	}
 
 	/*

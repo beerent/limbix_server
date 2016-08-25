@@ -52,12 +52,17 @@ public class RequestManager {
 
 	public RequestResponse verifyRequestFields(Request request) {
 		RequestType type = request.getRequestType();
-		if(type == RequestType.add) return verifyAddReminderRequestFields(request);
+		if(type == RequestType.login) return verifyLoginRequestFields(request);
+		else if(type == RequestType.add) return verifyAddReminderRequestFields(request);
 		else if(type == RequestType.get) return verifyGetRemindersRequestFields(request);
 		else if(type == RequestType.update_reminder) return verifyUpdateReminderRequestFields(request);
 		else if(type == RequestType.register_user) return verifyRegisterUserFields(request);
 		else if(type == RequestType.update_user) return verifyUpdateUserFields(request);
 		else return response_manager.invalidRequestType();
+	}
+	
+	private RequestResponse verifyLoginRequestFields(Request request){
+		return null;
 	}
 
 	private RequestResponse verifyAddReminderRequestFields(Request request) {
@@ -127,18 +132,20 @@ public class RequestManager {
 				return response_manager.missingRequiredField();
 			}
 		
-		if(request.getRequestType() == RequestType.add) return confirmAddReminderFields(request);
-		if(request.getRequestType() == RequestType.get) return confirmGetRemindersFields(request);
-		if(request.getRequestType() == RequestType.update_reminder) return confirmUpdateReminderFields(request);
-		if(request.getRequestType() == RequestType.register_user) return confirmRegisterUserFields(request);
-		if(request.getRequestType() == RequestType.update_user) return confirmUpdateUserFields(request);
+		if(request.getRequestType() == RequestType.login) return confirmLoginFields(request);
+		else if(request.getRequestType() == RequestType.add) return confirmAddReminderFields(request);
+		else if(request.getRequestType() == RequestType.get) return confirmGetRemindersFields(request);
+		else if(request.getRequestType() == RequestType.update_reminder) return confirmUpdateReminderFields(request);
+		else if(request.getRequestType() == RequestType.register_user) return confirmRegisterUserFields(request);
+		else if(request.getRequestType() == RequestType.update_user) return confirmUpdateUserFields(request);
 	
 		return response_manager.unknownError();
 	}
 
-	//validate:
-	//username/ password
-	//reminder
+	private RequestResponse confirmLoginFields(Request request){
+		return null;
+	}
+	
 	private RequestResponse confirmAddReminderFields(Request request){		
 		String reminder = request.getReminder();
 		return this.reminder_manager.validateReminderString(reminder);

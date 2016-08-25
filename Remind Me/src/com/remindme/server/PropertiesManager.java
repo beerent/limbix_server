@@ -15,7 +15,7 @@ public class PropertiesManager {
 	
 	private void loadProperties(){
 		try{
-			File f = new File(System.getProperty("user.dir") + "/conf/properties");
+			File f = new File(System.getProperty("user.dir") + "/Remind Me/conf/properties");
 			Scanner sc = new Scanner(f);
 			String next, first, second;
 			int equal;

@@ -5,5 +5,5 @@ server_port=1313
 
 #database
 db_user=root
-db_password=root
-db_string=jdbc:mysql://localhost/remindme?useSSL=false
+db_password=Ryczak13!
+db_string=jdbc:mysql://localhost/limbix?useSSL=false

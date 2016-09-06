@@ -58,6 +58,7 @@ public class User {
 		this.last_name = last_name;
 	}
 	
+	@Override
 	public String toString(){
 		return "" + getUserId() + " | " 
 				+ getUsername() + " | " 

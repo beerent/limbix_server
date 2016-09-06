@@ -7,8 +7,8 @@ import com.remindme.server.PropertiesManager;
 
 public class DAO{
 	private static final String DB_URL = PropertiesManager.getInstance().getProperty("db_string");
-	private static final String PASSWORD = PropertiesManager.getInstance().getProperty("db_user");
-	private static final String USERNAME = PropertiesManager.getInstance().getProperty("db_password");
+	private static final String USERNAME = PropertiesManager.getInstance().getProperty("db_user");
+	private static final String PASSWORD = PropertiesManager.getInstance().getProperty("db_password");
 
 
 	public DAO(){
@@ -19,9 +19,6 @@ public class DAO{
 	 */
 	public Connection getConnection(){
 		try{
-			System.out.println(DB_URL);
-			System.out.println(USERNAME);
-			System.out.println(PASSWORD);
 			Class.forName("com.mysql.jdbc.Driver");
 			return DriverManager.getConnection(DB_URL, DAO.USERNAME, DAO.PASSWORD);
 		}catch(Exception e){
@@ -48,6 +45,7 @@ public class DAO{
 	 *                                            <<"Release name 1", "date">, <"Release Name 2", "date">>
 	 */
 	public QueryResult executeQuery(Connection connection, PreparedStatement statement){
+		//System.out.println(statement);
 		ArrayList<ArrayList<String>> container = new ArrayList<ArrayList<String>>();
 		ArrayList<String> column_names = new ArrayList<String>();
 

@@ -1,11 +1,8 @@
 package com.remindme.server.request;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-
 import org.joda.time.DateTime;
 
-import com.remindme.reminder.ReminderManager;
 import com.remindme.user.User;
 
 public class Request {
@@ -155,6 +152,7 @@ public class Request {
 		return this.tags;
 	}
 	
+	@Override
 	public String toString(){
 		String retstr =  "type: " + request_type;
 		retstr += "\nusername: " + username;

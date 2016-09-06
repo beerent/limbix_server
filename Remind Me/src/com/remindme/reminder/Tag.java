@@ -25,6 +25,7 @@ public class Tag {
 		this.tag_id = tag_id;
 	}
 	
+	@Override
 	public String toString(){
 		return getTag() + " | " + getTagId();
 	}

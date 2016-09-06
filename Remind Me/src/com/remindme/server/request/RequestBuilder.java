@@ -36,7 +36,6 @@ public class RequestBuilder {
 		JSONUtil json_util = new JSONUtil();
 
 		/* CREATE JSON OBJECT FROM REQUEST STRING*/
-		System.out.println(response);
 		JSONObject json = json_util.getJSONObect(response);
 		json = (JSONObject) json.get("request");
 		
@@ -173,7 +172,7 @@ public class RequestBuilder {
 		Boolean deleted = null;
 		
 		try{ reminder_id = Integer.parseInt(reminder_id_str); }catch(Exception e){}
-		if(due_date_str.equals("-1"))
+		if(due_date_str != null && due_date_str.equals("-1"))
 			request.setRemoveDueDate();
 		else
 			try{ due_date = this.date_util.getDateTime(due_date_str); }catch(Exception e){}
@@ -191,7 +190,7 @@ public class RequestBuilder {
 	private void buildRegisterUserRequest(Request request, JSONObject json){
 		RequestType request_type = RequestType.register_user;
 		String username = (String) json.get("username");
-		String password1 = (String) json.get("password");
+		String password1 = (String) json.get("password1");
 		String password2 = (String) json.get("password2");
 		String first_name = (String) json.get("first_name");
 		String last_name = (String) json.get("last_name");

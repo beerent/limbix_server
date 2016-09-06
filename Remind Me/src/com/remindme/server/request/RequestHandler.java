@@ -69,12 +69,10 @@ public class RequestHandler {
 		
 		//REMINDER FAILED TO ADD
 		if(reminder == null){
-			System.out.println("request from " + request.getUsername() + " failed to add");
 			request_response = this.response_manager.unknownError();
 		
 		//REMINDER WAS SUCCESSFULLY ADDED
 		}else{
-			System.out.println("request from " + request.getUsername() + " was a success!");
 			reminder_manager.map_tags(reminder, tags);
 			request_response = this.response_manager.addReminderSuccess();
 		}
@@ -92,9 +90,14 @@ public class RequestHandler {
 		DateTime created_date = request.getCreatedDate();
 		DateTime created_date_after = request.getCreatedDateAfter();
 		Integer reminder_id = request.getReminderId();
-		String complete = "0";
-		if(request.getComplete() != null && request.getComplete() == true)
-			complete = "1";
+		String complete = null;
+		if(request.getComplete() != null){
+			if(request.getComplete() == true)
+				complete = "1";
+			else
+				complete = "0";
+		}
+		
 		
 		ArrayList<Reminder> reminders = 
 				this.reminder_manager.getReminders(user, tags, due_date_before, due_date,

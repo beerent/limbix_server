@@ -6,12 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.joda.time.DateTime;
-
 import com.remindme.database.DAO;
 import com.remindme.database.QueryResult;
-import com.remindme.user.User;
-import com.remindme.util.DateUtil;
 
 public class ReminderDAO extends DAO{
 	
@@ -194,7 +190,6 @@ public class ReminderDAO extends DAO{
 				statement.setString(i, complete);	
 			}
 			
-			System.out.println(statement);
 			return executeQuery(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -245,7 +240,6 @@ public class ReminderDAO extends DAO{
 				i++;
 			}
 			statement.setInt(i, reminder_id);
-			System.out.println(statement);
 			return executeUpdate(connection, statement);
 		}catch(Exception e){
 			e.printStackTrace();

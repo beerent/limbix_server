@@ -13,7 +13,6 @@ public class RemindMeServer {
 			System.out.println("server started");
 			while(true){
 				socket = server_socket.accept();
-				System.out.println("connection accepted");
 				new ConnectionHandler(socket).start();
 			}
 		} catch (IOException e) {

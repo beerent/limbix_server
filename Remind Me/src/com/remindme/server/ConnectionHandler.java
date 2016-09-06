@@ -39,12 +39,15 @@ public class ConnectionHandler extends Thread{
 	/*
 	 * Create new thread and handle the incoming connection.
 	 */
+	@Override
 	public void run(){
 		String in;
 		
 		/* CONTACT CLIENT, AND READ IN REQUEST */
 		write("OK");
 		in = read();
+		
+		System.out.println("REQUEST: " + in);
 		
 		/* CONVERT JSON STRING TO REQUEST OBJECT */
 		Request request = this.request_builder.buildRequest(in);
@@ -53,6 +56,8 @@ public class ConnectionHandler extends Thread{
 		/* VERIFY REQUEST TYPE */
 		response = this.request_manager.verifyRequestType(request);
 		if(response != null){
+			System.out.println("RESPONSE: " + response.toString());
+			System.out.println();
 			write(response.toString());
 			disconnect();
 			return;
@@ -61,18 +66,23 @@ public class ConnectionHandler extends Thread{
 		/* DETERMINE PRE OR POST LOGIN REQUEST */
 		boolean is_pre  = RequestType.isPreLoginRequest(request.getRequestType());
 		boolean is_post = RequestType.isPostLoginRequest(request.getRequestType());
+		
+		String response_str = null;
 		if(is_pre)
-			write(completePreLoginRequest(request));
+			response_str = completePreLoginRequest(request);
 		else if(is_post)
-			write(completePostLoginRequest(request));
+			response_str = completePostLoginRequest(request);
 		
 		/*
 		 *  IF HERE, THE REQUEST TYPE DOES NOT EXISTS. 
 		 *	REQUEST TYPES ARE EITHER PRE OR POST LOGIN REQUESTS
 		 */
 		else{
-			write(response_manager.invalidRequestType().toString());
+			response_str = response_manager.invalidRequestType().toString();
 		}
+		
+		write(response_str);
+		System.out.println("RESPONSE: " + response_str);
 		
 		disconnect();
 	}

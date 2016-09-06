@@ -1,8 +1,6 @@
 package com.remindme.reminder;
 
 import java.util.ArrayList;
-import java.util.Date;
-
 import org.joda.time.DateTime;
 
 import com.remindme.user.User;
@@ -106,6 +104,7 @@ public class Reminder {
 		this.deleted = deleted;
 	}
 	
+	@Override
 	public String toString(){
 		return reminder + " | " +
 		user + " | " +

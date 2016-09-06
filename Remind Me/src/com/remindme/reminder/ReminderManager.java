@@ -132,7 +132,6 @@ public class ReminderManager {
 			tag = tag_manager.getTag(tag_str);
 			if(tag == null){
 				tag_manager.addTag(tag_str);
-				System.out.println("found tag: " + tag);
 				tag = tag_manager.getTag(tag_str);
 			}
 			tag_manager.mapTag(tag, reminder);

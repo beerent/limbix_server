@@ -15,5 +15,12 @@ public class JSONUtil {
 		} catch (Exception e) {
 			return null;
 		}
-	}		
+	}	
+	
+	public static void main(String[] args) {
+		JSONUtil ju = new JSONUtil();
+		JSONObject jo = ju.getJSONObect("{\"response\":{\"op\":0,\"error\":\"Invalid username password combo.\"}}");
+		System.out.println(jo != null);
+		System.out.println(jo.get("response"));
+	}
 }

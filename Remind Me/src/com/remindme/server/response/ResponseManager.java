@@ -10,7 +10,7 @@ import com.remindme.reminder.Reminder;
 public class ResponseManager {
 
 	public RequestResponse invalidCredientials() {
-		return createErrorResponse("Invalid username and/or password.");
+		return createErrorResponse("Invalid username password combo.");
 	}
 
 	public RequestResponse missingUsername() {
@@ -227,8 +227,7 @@ public class ResponseManager {
 		for(Reminder reminder : reminders){
 			reminders_array.add(getReminderJSON(reminder));
 		}
-		reminders_json.put("reminder", reminders_array);
-		return_json.put("reminders", reminders_json);
+		return_json.put("reminders", reminders_array);
 		return return_json;
 	}
 	
@@ -247,7 +246,7 @@ public class ResponseManager {
 	@SuppressWarnings("unchecked")
 	private RequestResponse createSuccessResponse(String message){
 		JSONObject response = new JSONObject();
-		response.put("op", 1);
+		response.put("op", 0);
 		response.put("success", message);
 		JSONObject jo = new JSONObject();
 		jo.put("response", response);
@@ -257,7 +256,7 @@ public class ResponseManager {
 	@SuppressWarnings("unchecked")
 	private RequestResponse createErrorResponse(String error){
 		JSONObject response = new JSONObject();
-		response.put("op", 0);
+		response.put("op", 1);
 		response.put("error", error);
 		JSONObject jo = new JSONObject();
 		jo.put("response", response);

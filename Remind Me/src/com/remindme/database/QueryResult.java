@@ -45,4 +45,18 @@ public class QueryResult {
 	public boolean containsData(){
 		return numRows() > 0 && numCols() > 0;
 	}
+	
+	public String toString(){
+		String ret_str = "";
+		for(int i = 0; i < numRows(); i++){
+			if(numCols() > 0){
+				ret_str += " | " + getElement(i, 0);
+				for(int j = 1; j < numCols(); j++){
+					ret_str += " | " + getElement(i, j);
+				}	
+				ret_str += " |\n";
+			}
+		}
+		return ret_str;
+	}
 }

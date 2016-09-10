@@ -90,7 +90,7 @@ public class RequestHandler {
 		DateTime created_date = request.getCreatedDate();
 		DateTime created_date_after = request.getCreatedDateAfter();
 		Integer reminder_id = request.getReminderId();
-		String complete = null;
+		String complete = null, deleted = null;
 		if(request.getComplete() != null){
 			if(request.getComplete() == true)
 				complete = "1";
@@ -98,11 +98,19 @@ public class RequestHandler {
 				complete = "0";
 		}
 		
+		if(request.getDeleted() != null){
+			if(request.getDeleted() == true)
+				deleted = "1";
+			else
+				deleted = "0";
+		}
+		System.out.println(deleted);
+		
 		
 		ArrayList<Reminder> reminders = 
 				this.reminder_manager.getReminders(user, tags, due_date_before, due_date,
 						due_date_after, created_date_before, created_date, created_date_after,
-						reminder_id, complete);
+						reminder_id, complete, deleted);
 		
 		//MAX AMOUNT OF REMINDERS ALLOWED
 		if(reminders.size() >= 500)

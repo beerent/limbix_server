@@ -125,6 +125,7 @@ public class RequestBuilder {
 		String created_str = (String) json.get("created");		
 		String created_after_str = (String) json.get("created_after");		
 		String complete_str = (String) json.get("complete");
+		String deleted_str = (String) json.get("deleted");
 		
 		ArrayList<String> tags = null;
 		DateTime due_date_before = null;
@@ -135,6 +136,7 @@ public class RequestBuilder {
 		DateTime created_after = null;
 		Integer reminder_id = null;
 		Boolean complete = null;
+		Boolean deleted = null;
 		
 		try { tags = this.reminder_manager.getStringsFromCommaDeliminatedString(tags_str); }catch(Exception e){}
 		try { due_date_before = this.date_util.getDateTime(due_date_before_str); }catch(Exception e){}
@@ -145,6 +147,7 @@ public class RequestBuilder {
 		try { created_after = this.date_util.getDateTime(created_after_str); }catch(Exception e){}
 		try { reminder_id = Integer.parseInt((String) json.get("reminder_id")); }catch(Exception e){}
 		try { complete = Integer.parseInt(complete_str) == 1; }catch(Exception e){}
+		try { deleted = Integer.parseInt(deleted_str) == 1; }catch(Exception e){}
 
 		request.setRequestType(request_type);
 		request.setTags(tags);
@@ -156,6 +159,7 @@ public class RequestBuilder {
 		request.setCreatedDateAfter(created_after);
 		request.setReminderId(reminder_id);
 		request.setComplete(complete);
+		request.setDeleted(deleted);
 	}
 	
 	private void buildUpdateReminderRequest(Request request, JSONObject json){

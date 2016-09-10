@@ -103,7 +103,8 @@ public class ReminderDAO extends DAO{
 
 	public QueryResult getReminders(Integer user_id, String tags, String due_date_before, String due_date,
 			String due_date_after, String created_date_before, String created_date, String created_date_after,
-			Integer reminder_id, String complete) {
+			Integer reminder_id, String complete, String deleted) {
+		System.out.println(deleted);
 		
 		ReminderManager reminder_manager = new ReminderManager();
 		ArrayList<String> tags_as_arraylist = null;
@@ -137,7 +138,9 @@ public class ReminderDAO extends DAO{
 		if(reminder_id != null)
 			sql += "and reminders.reminder_id = ? ";
 		if(complete != null)
-			sql += "and complete = ?";
+			sql += "and complete = ? ";
+		if(deleted != null)
+			sql += "and deleted = ?";
 
 		try {
 			Connection connection = super.getConnection();
@@ -188,6 +191,10 @@ public class ReminderDAO extends DAO{
 
 			if(complete != null){
 				statement.setString(i, complete);	
+			}
+			
+			if(deleted != null){
+				statement.setString(i, deleted);
 			}
 			
 			return executeQuery(connection, statement);

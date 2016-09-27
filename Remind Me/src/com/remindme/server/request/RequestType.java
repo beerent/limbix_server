@@ -6,7 +6,9 @@ public enum RequestType {
 	get,
 	update_reminder,
 	register_user, 
-	update_user;
+	update_user,
+	add_filter, 
+	get_tags;
 
 	/* RETURNS TRUE IF REQUEST TYPE A PRE LOGIN REQUEST */
 	public static boolean isPreLoginRequest(RequestType request_type) {

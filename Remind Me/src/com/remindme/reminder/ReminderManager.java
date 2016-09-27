@@ -24,51 +24,6 @@ public class ReminderManager {
 		this.response_manager = new ResponseManager();
 		this.date_util = new DateUtil();
 	}
-	
-	/*
-	 * scans through a reminder string, storing all tags into an arraylist,
-	 * and return the arraylist.
-	 */
-	public ArrayList<String> getTags(String reminder){
-		ArrayList<String> tags = new ArrayList<String>();
-		Scanner sc = new Scanner(reminder);
-		
-		String token;
-		while(sc.hasNext()){
-			token = sc.next();
-			if(token.charAt(0) == '#' && token.substring(0).matches("^.*[^a-zA-Z0-9 ].*$"))
-				tags.add(token);
-		}
-		sc.close();
-		
-		return tags;
-	}
-	
-	public ArrayList<String> getStringsFromCommaDeliminatedString(String tags){
-		if(tags.equals("")) return new ArrayList<String>();
-		
-		String [] tags_array = tags.split(",");
-		ArrayList<String> ret_array = new ArrayList<String>();
-		for(String s : tags_array){
-			ret_array.add(s.trim());
-		}
-		return ret_array;
-	}
-	
-	public String getTagsCommaDelimited(ArrayList<String> tags){
-		if(tags.size() == 0)
-			return null;
-		
-		if(tags.size() == 1)
-			return tags.get(0);
-		
-		String tags_string = tags.get(0);
-		for(int i = 1; i < tags.size(); i++){
-			tags_string += ", " + tags.get(i);
-		}
-		
-		return tags_string;
-	}
 
 	/*
 	 * adds a reminder without a date
@@ -159,7 +114,7 @@ public class ReminderManager {
 		Integer reminder_id_str = null;
 		
 		//optional fields
-		try{ tags_str = getTagsCommaDelimited(tags); }catch(Exception e){}
+		try{ tags_str = new TagManager().getTagsCommaDelimited(tags); }catch(Exception e){}
 		try{ due_date_before_str = this.date_util.JodaDateTimeToSQLDateTime(due_date_before); }catch(Exception e){}
 		try{ due_date_str = this.date_util.JodaDateTimeToSQLDateTime(due_date); }catch(Exception e){}
 		try{ due_date_after_str = this.date_util.JodaDateTimeToSQLDateTime(due_date_after); }catch(Exception e){}
@@ -214,6 +169,7 @@ public class ReminderManager {
 
 	public Reminder updateReminder(int reminder_id, String reminder, DateTime due_date, Boolean remove_due_date,
 			Boolean complete, Boolean deleted) {
+		TagManager tag_manager = new TagManager();
 		String complete_str = null;
 		if(complete != null){
 			complete_str = "1";
@@ -239,7 +195,7 @@ public class ReminderManager {
 				deleted_str);
 		//if this worked and reminder not null aka tags potentially exist
 		if(result && reminder != null)
-			this.reminder_dao.updateTags(reminder_id, getTags(reminder));
+			this.reminder_dao.updateTags(reminder_id, tag_manager.getTags(reminder));
 		
 		return getReminder(reminder_id);
 	}
@@ -251,7 +207,7 @@ public class ReminderManager {
 		return null;
 	}
 
-	public RequestResponse validateDueDate(DateTime due_date) {
+	public RequestResponse validateDate(DateTime due_date) {
 		return null;
 	}
 
@@ -262,4 +218,5 @@ public class ReminderManager {
 	public RequestResponse validateDeleted(boolean deleted) {
 		return null;
 	}
+
 }

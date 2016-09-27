@@ -13,7 +13,14 @@ public class DateUtil {
 			s = s.substring(0, s.lastIndexOf(".0"));
 
 		DateTimeFormatter formatter = getDateTimeFormatter();
-		DateTime dt = formatter.parseDateTime(s);
+		DateTime dt;
+		
+		try{
+			dt = formatter.parseDateTime(s);
+		}catch(Exception e){
+			dt = null;
+		}
+		
 		return dt;
 	}
 	

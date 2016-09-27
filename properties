@@ -4,6 +4,11 @@
 server_port=1313
 
 #database
+#db_user=remote_user
+#db_password=r3m0t3_us3r
+
 db_user=root
-db_password=root
-db_string=jdbc:mysql://localhost/remindme?useSSL=false
+db_password=Ryczak13!
+
+#db_string=jdbc:mysql://52.43.169.37/limbix?useSSL=false
+db_string=jdbc:mysql://localhost/limbix?useSSL=false

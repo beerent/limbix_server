@@ -36,9 +36,10 @@ public class ConnectionHandler extends Thread{
 		this.user_manager     = new UserManager();
 	}
 	
-	/*
-	 * Create new thread and handle the incoming connection.
-	 */
+
+	/***********************/
+	/* SERVICE THE REQUEST */
+	/***********************/
 	@Override
 	public void run(){
 		String in;
@@ -56,8 +57,6 @@ public class ConnectionHandler extends Thread{
 		/* VERIFY REQUEST TYPE */
 		response = this.request_manager.verifyRequestType(request);
 		if(response != null){
-			System.out.println("RESPONSE: " + response.toString());
-			System.out.println();
 			write(response.toString());
 			disconnect();
 			return;
@@ -87,27 +86,43 @@ public class ConnectionHandler extends Thread{
 		disconnect();
 	}
 	
+	
+	
+	/*********************/
+	/* PRE LOGIN REQUEST */
+	/*********************/	
 	private String completePreLoginRequest(Request request) {
 		return finishPreAndPostLoginRequest(request);
 	}
 	
-	/* RETURNS A JSON STRING ACCORDING TO HOW THE REQUEST WENT */
+	
+	
+	/**********************/
+	/* POST LOGIN REQUEST */
+	/**********************/
 	private String completePostLoginRequest(Request request) {
 		
 		/* VERIFY USERNAME AND PASSWORD EXIST */
 		RequestResponse response = this.request_manager.verifyRequestUsernameAndPasswordExist(request);
 		if(response != null)
 			return response.toString();
+		System.out.println("A");
 			
 		/* VERIFY USERNAME AND PASSWORD COMBO */		
 		User user = this.user_manager.authenticateUser(request.getUsername(), request.getPassword());
 		if(user == null)
 			return response_manager.invalidCredientials().toString();
 		request.setUser(user); //user exists
+		System.out.println("B");
 		
 		return finishPreAndPostLoginRequest(request);
 	}
 	
+	
+	
+	/***********************/
+	/* FINISH PRE AND POST */
+	/***********************/
 	private String finishPreAndPostLoginRequest(Request request){
 		RequestResponse response;
 		/* VERIFY REMAINING REQUIRED FIELDS ARE PRESENT */
@@ -116,20 +131,26 @@ public class ConnectionHandler extends Thread{
 			return response.toString();
 		request.setContainsRequiredFields(true);
 		
+		System.out.println("C");	
+		
 		/* VALIDATE REQUEST FIELDS */
 		response = request_manager.confirmFields(request);
 		if(response != null)
 			return response.toString();
 		request.setConfirmedFields(true);
+		
+		System.out.println("D");
 	
 		/* HANDLE THE REQUEST, AND SEND RESPONSE STRING */
 		response = request_handler.handleRequest(request);
 		return response.toString();
 	}
 
-	/*
-	 * Close I/O and the socket
-	 */
+	
+	
+	/**********************/
+	/*     DISCONNECT     */
+	/**********************/
 	private void disconnect(){
 		try {
 			this.reader.close();
@@ -140,18 +161,21 @@ public class ConnectionHandler extends Thread{
 		}
 	}
 	
-	/*
-	 * Write to the socket
-	 */
+
+	
+	/*********************/
+	/*  WRITE TO SOCKET  */
+	/*********************/
 	private void write(String s){
 		this.writer.write(s);
 	}
 	
-	/*
-	 * read from the socket 
-	 */
+
+	
+	/**********************/
+	/*  READ FROM SOCKET  */
+	/**********************/
 	private String read(){
 		return this.reader.read();
-	}
-	
+	}	
 }

@@ -5,6 +5,7 @@ import com.remindme.reminder.ReminderManager;
 import com.remindme.server.response.RequestResponse;
 import com.remindme.server.response.ResponseManager;
 import com.remindme.user.UserManager;
+import com.remindme.util.DateUtil;
 
 public class RequestManager {
 	private ResponseManager response_manager;
@@ -37,12 +38,12 @@ public class RequestManager {
 	
 	public RequestResponse verifyRequestUsernameAndPasswordExist(Request request){
 		RequestResponse response = new RequestResponse();
-		if(request.getUsername() == null){
+		if(request.getUsername() == null || request.getUsername().length() == 0){
 			response = response_manager.missingUsername();
 			return response;
 		}
 		
-		if(request.getPassword() == null){
+		if(request.getPassword() == null || request.getPassword().length() == 0){
 			response = response_manager.missingPassword();
 			return response;
 		}
@@ -55,9 +56,11 @@ public class RequestManager {
 		if(type == RequestType.login) return verifyLoginRequestFields(request);
 		else if(type == RequestType.add) return verifyAddReminderRequestFields(request);
 		else if(type == RequestType.get) return verifyGetRemindersRequestFields(request);
+		else if(type == RequestType.get_tags) return verifyGetTagsRequestFields(request);
 		else if(type == RequestType.update_reminder) return verifyUpdateReminderRequestFields(request);
 		else if(type == RequestType.register_user) return verifyRegisterUserFields(request);
 		else if(type == RequestType.update_user) return verifyUpdateUserFields(request);
+		else if(type == RequestType.add_filter) return verifyAddFilterRequestFields(request);
 		else return response_manager.invalidRequestType();
 	}
 	
@@ -78,9 +81,30 @@ public class RequestManager {
 		return null;
 	}
 	
+	private RequestResponse verifyGetTagsRequestFields(Request request) {
+		if(request.getDeleted() == null)
+			return response_manager.missingDeleted();
+		return null;
+	}
+	
+	private RequestResponse verifyAddFilterRequestFields(Request request) {
+		if(request.getTags() == null &&
+				request.getCreatedDate() == null &&
+				request.getCreatedDateBefore() == null && 
+				request.getCreatedDateAfter() == null &&
+				request.getDueDate() == null &&
+				request.getDueDateBefore() == null &&
+				request.getDueDateAfter() == null &&
+				request.getComplete() == null)
+			return this.response_manager.noFiltersToAdd();
+		return null;
+	}
+	
 	private RequestResponse verifyUpdateReminderRequestFields(Request request) {
 		if(request.getReminderId() == null)
 			return this.response_manager.invalidReminderId();
+		
+		//if all update fields are empty, there's nothing to update.
 		if(request.getReminder() == null && 
 				request.getDueDate() == null &&
 				request.getComplete() == null &&
@@ -135,9 +159,11 @@ public class RequestManager {
 		if(request.getRequestType() == RequestType.login) return confirmLoginFields(request);
 		else if(request.getRequestType() == RequestType.add) return confirmAddReminderFields(request);
 		else if(request.getRequestType() == RequestType.get) return confirmGetRemindersFields(request);
+		else if(request.getRequestType() == RequestType.get_tags) return confirmGetTagsFields(request);
 		else if(request.getRequestType() == RequestType.update_reminder) return confirmUpdateReminderFields(request);
 		else if(request.getRequestType() == RequestType.register_user) return confirmRegisterUserFields(request);
 		else if(request.getRequestType() == RequestType.update_user) return confirmUpdateUserFields(request);
+		else if(request.getRequestType() == RequestType.add_filter) return confirmAddFilterFields(request);
 	
 		return response_manager.unknownError();
 	}
@@ -152,6 +178,17 @@ public class RequestManager {
 	}
 
 	private RequestResponse confirmGetRemindersFields(Request request) {
+		return null;
+	}
+	
+	private RequestResponse confirmGetTagsFields(Request request) {
+		return null;
+	}
+	
+	private RequestResponse confirmAddFilterFields(Request request) {
+		if(request.getTags() != null)
+			if(request.getTags().size() < 1)
+				return this.response_manager.invalidTags();
 		return null;
 	}
 	
@@ -171,7 +208,7 @@ public class RequestManager {
 		
 		//if reminder due date is invalid, return error
 		if(request.getDueDate() != null)
-			response = this.reminder_manager.validateDueDate(reminder.getDueDate());
+			response = this.reminder_manager.validateDate(reminder.getDueDate());
 		if(response != null)
 			return response;
 		

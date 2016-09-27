@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.remindme.database.DAO;
 import com.remindme.database.QueryResult;
+import com.remindme.user.User;
 
 public class ReminderDAO extends DAO{
 	
@@ -106,7 +107,7 @@ public class ReminderDAO extends DAO{
 			Integer reminder_id, String complete, String deleted) {
 		System.out.println(deleted);
 		
-		ReminderManager reminder_manager = new ReminderManager();
+		TagManager tag_manager = new TagManager();
 		ArrayList<String> tags_as_arraylist = null;
 
 		String sql = "select distinct reminders.reminder_id, user_id, reminder, created, due_date, complete, deleted ";
@@ -117,7 +118,7 @@ public class ReminderDAO extends DAO{
 		}
 		sql += "where user_id = ? ";
 		if(tags != null){
-			tags_as_arraylist = reminder_manager.getStringsFromCommaDeliminatedString(tags);
+			tags_as_arraylist = tag_manager.getStringsFromCommaDeliminatedString(tags);
 			sql += "and tags.tag in (?";
 			for(int i = 1; i < tags_as_arraylist.size(); i++)
 				sql += ", ?";
@@ -160,7 +161,7 @@ public class ReminderDAO extends DAO{
 			}
 			
 			if(due_date != null){
-				statement.setString(i, due_date);;
+				statement.setString(i, due_date);
 				i++;
 			}
 			
@@ -191,12 +192,13 @@ public class ReminderDAO extends DAO{
 
 			if(complete != null){
 				statement.setString(i, complete);	
+				i++;
 			}
 			
 			if(deleted != null){
 				statement.setString(i, deleted);
 			}
-			
+
 			return executeQuery(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -278,6 +280,81 @@ public class ReminderDAO extends DAO{
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+
+	public QueryResult getTags(int user_id, String due_date_before, String due_date, String due_date_after,
+			String created_date_before, String created_date, String created_date_after, String complete,
+			String deleted) {
+		
+		String sql = "select distinct tags.tag_id, tags.tag from tags " +
+						"join reminder_tag_map on tags.tag_id = reminder_tag_map.tag_id " +
+						"join reminders on reminder_tag_map.reminder_id = reminders.reminder_id " +
+						"where user_id = ? and deleted = ? ";
+		
+		if(complete != null)
+			sql += "and complete = ? ";
+		if(due_date_before != null)
+			sql += "and due_date < ? ";
+		if(due_date != null)
+			sql += "and due_date = ? ";
+		if(due_date_after != null)
+			sql += "and due_date > ? ";
+		if(created_date_before != null)
+			sql += "and created < ? ";
+		if(created_date != null)
+			sql += "and created = ? ";
+		if(created_date_after != null)
+			sql += "and created > ? ";
+		
+		
+		try{
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, user_id);
+			statement.setString(2, deleted);
+			
+			int i = 3;
+
+			if(complete != null){
+				statement.setString(i, complete);
+				i++;
+			}
+			
+			if(due_date_before != null){
+				statement.setString(i, due_date_before);
+				i++;
+			}
+			
+			if(due_date != null){
+				statement.setString(i, due_date);
+				i++;
+			}
+			
+			if(due_date_after != null){
+				statement.setString(i, due_date_after);
+				i++;
+			}
+			
+			if(created_date_before != null){
+				statement.setString(i, created_date_before);
+				i++;
+			}
+			
+			if(created_date != null){
+				statement.setString(i, created_date);
+				i++;
+			}
+			
+			if(created_date_after != null)
+				statement.setString(i, created_date_after);
+			
+			System.out.println(statement);
+			return executeQuery(connection, statement);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 }

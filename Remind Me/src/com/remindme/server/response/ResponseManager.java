@@ -6,6 +6,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.remindme.reminder.Reminder;
+import com.remindme.reminder.Tag;
 
 public class ResponseManager {
 
@@ -147,6 +148,10 @@ public class ResponseManager {
 	public RequestResponse nothingToUpdate() {
 		return createErrorResponse("Request contains no updatable fields to update.");
 	}
+	
+	public RequestResponse noFiltersToAdd() {
+		return createErrorResponse("Request contains no filters to add.");
+	}
 
 	public RequestResponse invalidReminderId() {
 		return createErrorResponse("Invalid Reminder ID or no reminder ID found.");
@@ -180,6 +185,10 @@ public class ResponseManager {
 		return createErrorResponse("Request is missing first new password to update password.");
 	}
 	
+	public RequestResponse invalidTags() {
+		return createErrorResponse("invalid tags found.");
+	}
+	
 	public RequestResponse nameTooShort() {
 		return createErrorResponse("Invalid first or last name. must have at least 1 character.");
 	}
@@ -190,6 +199,14 @@ public class ResponseManager {
 
 	public RequestResponse invalidName() {
 		return createErrorResponse("Name is invalid. Characters must be alphanumeric or the characters '_' and '-'.");
+	}
+	
+	public RequestResponse missingComplete() {
+		return createErrorResponse("Get Tags request requires complete field.");
+	}
+	
+	public RequestResponse missingDeleted() {
+		return createErrorResponse("Get Tags request requires deleted field.");
 	}
 	
 	public RequestResponse unknownError() {
@@ -219,9 +236,12 @@ public class ResponseManager {
 		return new RequestResponse(getRemindersJSON(reminders));
 	}
 	
+	public RequestResponse getTagsSuccess(ArrayList<Tag> tags) {
+		return new RequestResponse(getTagsJSON(tags));
+	}
+	
 	@SuppressWarnings("unchecked")
 	private JSONObject getRemindersJSON(ArrayList<Reminder> reminders){
-		JSONObject reminders_json = new JSONObject();
 		JSONObject return_json = new JSONObject();
 		JSONArray reminders_array = new JSONArray();
 		for(Reminder reminder : reminders){
@@ -241,6 +261,27 @@ public class ResponseManager {
 		reminder_json.put("due_date", "" + reminder.getDueDate());
 		reminder_json.put("created_date", "" + reminder.getCreated());
 		return reminder_json;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject getTagsJSON(ArrayList<Tag> tags){
+		JSONObject return_json = new JSONObject();
+		JSONArray tag_array = new JSONArray();
+		for(Tag tag : tags){
+			tag_array.add(getTagJSON(tag));
+		}
+		return_json.put("tags", tag_array);
+		return return_json;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject getTagJSON(Tag tag){
+		JSONObject tag_json = new JSONObject();
+		
+		tag_json.put("tag_id", "" + tag.getTagId());
+		tag_json.put("tag", "" + tag.getTag());
+
+		return tag_json;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -262,6 +303,4 @@ public class ResponseManager {
 		jo.put("response", response);
 		return new RequestResponse(jo);
 	}
-
-
 }

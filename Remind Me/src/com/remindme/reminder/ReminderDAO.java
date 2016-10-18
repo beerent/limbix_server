@@ -351,7 +351,6 @@ public class ReminderDAO extends DAO{
 			if(created_date_after != null)
 				statement.setString(i, created_date_after);
 			
-			System.out.println(statement);
 			return executeQuery(connection, statement);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -362,7 +361,6 @@ public class ReminderDAO extends DAO{
 	public QueryResult limbExistsInFilter(Integer user_id, String created_before, String created, String created_after,
 			String due_before, String due, String due_after, String tags, String completed, String deleted,
 			int reminder_id) {
-		System.out.println("REMINDER ID: " + reminder_id);
 		return getReminders(user_id, tags, due_before, due,
 				due_after, created_before, created, created_after,
 				reminder_id, completed, deleted);

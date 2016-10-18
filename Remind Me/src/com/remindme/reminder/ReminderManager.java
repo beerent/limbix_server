@@ -6,6 +6,8 @@ import java.util.Scanner;
 import org.joda.time.DateTime;
 
 import com.remindme.database.QueryResult;
+import com.remindme.filter.Filter;
+import com.remindme.filter.FilterManager;
 import com.remindme.server.response.RequestResponse;
 import com.remindme.server.response.ResponseManager;
 import com.remindme.user.User;
@@ -167,7 +169,7 @@ public class ReminderManager {
 		return reminders;
 	}
 
-	public Reminder updateReminder(int reminder_id, String reminder, DateTime due_date, Boolean remove_due_date,
+	public boolean updateReminder(int reminder_id, String reminder, DateTime due_date, Boolean remove_due_date,
 			Boolean complete, Boolean deleted) {
 		TagManager tag_manager = new TagManager();
 		String complete_str = null;
@@ -197,7 +199,7 @@ public class ReminderManager {
 		if(result && reminder != null)
 			this.reminder_dao.updateTags(reminder_id, tag_manager.getTags(reminder));
 		
-		return getReminder(reminder_id);
+		return result;
 	}
 	
 	public RequestResponse validateReminderString(String reminder) {
@@ -217,6 +219,63 @@ public class ReminderManager {
 
 	public RequestResponse validateDeleted(boolean deleted) {
 		return null;
+	}
+
+	public boolean reminderExistsInCurrentFilter(User user, int reminder_id) {
+		DateUtil date_util = new DateUtil();
+		
+		FilterManager filter_manager = new FilterManager();
+		Filter current_filter = filter_manager.getCurrentUserFilter(user);
+		
+		DateTime created_before = current_filter.getCreatedBefore();
+		DateTime created = current_filter.getCreated();
+		DateTime created_after = current_filter.getCreatedAfter();
+		DateTime due_before = current_filter.getDueBefore();
+		DateTime due = current_filter.getDue();
+		DateTime due_after = current_filter.getDueAfter();
+		String tags = current_filter.getTags();
+		Boolean completed = current_filter.isCompleted();
+		
+		String created_before_str = null;
+		String created_str = null;
+		String created_after_str = null;
+		String due_before_str = null;
+		String due_str = null;
+		String due_after_str = null;
+		String completed_str = null;
+		String deleted_str = "0";
+		
+		if(created_before != null)
+			created_before_str = date_util.dateTimeToSimpleString(created_before);
+		if(created != null)
+			created_str = date_util.dateTimeToSimpleString(created);
+		if(created_after != null)
+			created_after_str = date_util.dateTimeToSimpleString(created_after);
+		if(due_before != null)
+			due_before_str = date_util.dateTimeToSimpleString(due_before);
+		if(due != null)
+			due_str = date_util.dateTimeToSimpleString(due);
+		if(due_after != null)
+			due_after_str = date_util.dateTimeToSimpleString(due_after);
+		
+		if(tags.equals("null"))
+			tags = null;
+		
+		if(completed != null){
+			completed_str = "1";
+			if(!completed)
+				completed_str = "0";
+		
+		}
+		
+		
+		QueryResult result = this.reminder_dao.limbExistsInFilter(
+				user.getUserId(), created_before_str, created_str, created_after_str, 
+				due_before_str, due_str, due_after_str, 
+				tags, completed_str, deleted_str, reminder_id
+		);
+		
+		return result.containsData();
 	}
 
 }

@@ -61,6 +61,10 @@ public class RequestManager {
 		else if(type == RequestType.register_user) return verifyRegisterUserFields(request);
 		else if(type == RequestType.update_user) return verifyUpdateUserFields(request);
 		else if(type == RequestType.add_filter) return verifyAddFilterRequestFields(request);
+		else if(type == RequestType.get_filters_meta) return verifyGetFiltersMetaRequestFields(request);
+		else if(type == RequestType.get_filter) return verifyGetFilterRequestFields(request);
+		else if(type == RequestType.delete_filter) return verifyDeleteFilterRequestFields(request);
+		else if(type == RequestType.update_gcm_token) return verifyUpdateGCMTokenFields(request);
 		else return response_manager.invalidRequestType();
 	}
 	
@@ -78,6 +82,21 @@ public class RequestManager {
 		/*
 		 * NO REQUIREMENTS ON GET REQUEST AT THIS POINT
 		 */
+		return null;
+	}
+
+	private RequestResponse verifyGetFiltersMetaRequestFields(Request request){
+		//TODO: check if filter name already exists for user
+		
+		return null;
+	}
+	
+	private RequestResponse verifyGetFilterRequestFields(Request request){
+		return null;
+	}
+	
+	private RequestResponse verifyDeleteFilterRequestFields(Request request){
+		//TODO: check if id exists and is not deleted
 		return null;
 	}
 	
@@ -140,6 +159,12 @@ public class RequestManager {
 		return null;
 	}
 	
+	private RequestResponse verifyUpdateGCMTokenFields(Request request) {
+		if(request.getGCMToken() == null)
+			return response_manager.missingOrInvalidGCMToken();
+		return null;
+	}
+	
 	
 	
 	
@@ -164,6 +189,10 @@ public class RequestManager {
 		else if(request.getRequestType() == RequestType.register_user) return confirmRegisterUserFields(request);
 		else if(request.getRequestType() == RequestType.update_user) return confirmUpdateUserFields(request);
 		else if(request.getRequestType() == RequestType.add_filter) return confirmAddFilterFields(request);
+		else if(request.getRequestType() == RequestType.get_filters_meta) return confirmGetFiltersMetaFields(request);
+		else if(request.getRequestType() == RequestType.get_filter) return confirmGetFilterFields(request);
+		else if(request.getRequestType() == RequestType.delete_filter) return confirmDeleteFilterFields(request);
+		else if(request.getRequestType() == RequestType.update_gcm_token) return confirmUpdateGCMTokenFields(request);
 	
 		return response_manager.unknownError();
 	}
@@ -181,14 +210,30 @@ public class RequestManager {
 		return null;
 	}
 	
+	private RequestResponse confirmUpdateGCMTokenFields(Request request) {
+		return null;
+	}
+	
 	private RequestResponse confirmGetTagsFields(Request request) {
 		return null;
 	}
 	
+	private RequestResponse confirmGetFiltersMetaFields(Request request) {
+		return null;
+	}
+	
+	private RequestResponse confirmGetFilterFields(Request request) {
+		return null;
+	}
+	
+	private RequestResponse confirmDeleteFilterFields(Request request) {
+		return null;
+	}
+	
 	private RequestResponse confirmAddFilterFields(Request request) {
-		if(request.getTags() != null)
-			if(request.getTags().size() < 1)
-				return this.response_manager.invalidTags();
+		String filter_name = request.getFilterName();
+		if(filter_name.length() < 1)
+			return this.response_manager.invalidFilterName();
 		return null;
 	}
 	

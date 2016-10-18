@@ -12,12 +12,10 @@ import com.remindme.util.JSONUtil;
 
 public class RequestBuilder {
 
-	private ReminderManager reminder_manager;
 	private TagManager tag_manager;
 	private DateUtil date_util;
 
 	public RequestBuilder(){
-		this.reminder_manager = new ReminderManager();
 		this.tag_manager = new TagManager();
 		this.date_util = new DateUtil();
 	}
@@ -30,6 +28,7 @@ public class RequestBuilder {
 	 * 
 	 * TYPES IN PROGRESS:
 	 *   - get_tags
+	 *   -update_gcm_token
 	 *   
 	 * TYPES TO DO:
 	 *   - add_filter
@@ -90,6 +89,18 @@ public class RequestBuilder {
 		
 		//ADD FILTER
 		else if(type.equals("add_filter")) buildAddFilterRequest(request, json);
+		
+		//GET FILTERS META
+		else if(type.equals("get_filters_meta")) buildGetFiltersMetaRequest(request, json);
+		
+		//GET FILTERS META
+		else if(type.equals("get_filter")) buildGetFilterRequest(request, json);
+		
+		//DELETE FILTER
+		else if(type.equals("delete_filter")) buildDeleteFilterRequest(request, json);
+	
+		//UPDATE GCM TOKEN
+		else if(type.equals("update_gcm_token")) buildUpdateGCMTokenRequest(request, json);
 		
 		return request;
 	}
@@ -249,6 +260,37 @@ public class RequestBuilder {
 		request.setDeleted(deleted);
 	}
 	
+	/*
+	 *  Adds the appropriate fields for a GET FILTER request to
+	 *  the request object.
+	 */
+	private void buildGetFilterRequest(Request request, JSONObject json) {
+		RequestType request_type = RequestType.get_filter;	
+		String filter_id_str = (String) json.get("filter_id");
+		Integer filter_id = null;
+		try{ filter_id = Integer.parseInt(filter_id_str); }catch(Exception e){}
+		
+		request.setRequestType(request_type);
+		request.setFilterId(filter_id);
+	}
+	
+	private void buildDeleteFilterRequest(Request request, JSONObject json) {
+		RequestType request_type = RequestType.delete_filter;	
+		Long filter_id = (Long) json.get("filter_id");
+		
+		request.setRequestType(request_type);
+		request.setFilterId(filter_id.intValue());
+	}
+	
+	/*
+	 *  Adds the appropriate fields for a GET FILTERS META request to
+	 *  the request object.
+	 */
+	private void buildGetFiltersMetaRequest(Request request, JSONObject json) {
+		RequestType request_type = RequestType.get_filters_meta;	
+		request.setRequestType(request_type);
+	}
+	
 	
 	private void buildUpdateReminderRequest(Request request, JSONObject json){
 		RequestType request_type = RequestType.update_reminder;
@@ -330,10 +372,11 @@ public class RequestBuilder {
 	private void buildAddFilterRequest(Request request, JSONObject json) {
 		RequestType request_type   = RequestType.add_filter;	
 		String reminder_id_str     = (String) json.get("reminder_id");
+		String filter_name          = (String) json.get("filter_name");
 		String tags_str            = (String) json.get("tags");		
-		String due_date_before_str = (String) json.get("due_date_before");		
-		String due_date_str        = (String) json.get("due_date");	
-		String due_date_after_str  = (String) json.get("due_date_after");		
+		String due_date_before_str = (String) json.get("due_before");		
+		String due_date_str        = (String) json.get("due");	
+		String due_date_after_str  = (String) json.get("due_after");		
 		String created_before_str  = (String) json.get("created_before");		
 		String created_str         = (String) json.get("created");		
 		String created_after_str   = (String) json.get("created_after");		
@@ -378,6 +421,7 @@ public class RequestBuilder {
 				deleted = deleted_str.charAt(0) == '1';
 
 		request.setRequestType(request_type);
+		request.setFilterName(filter_name);
 		request.setTags(tags);
 		request.setDueDateBefore(due_date_before);
 		request.setDueDate(due_date);
@@ -388,6 +432,18 @@ public class RequestBuilder {
 		request.setReminderId(reminder_id);
 		request.setComplete(complete); 
 		request.setDeleted(deleted);
+	}
+	
+	/*
+	 * Adds the appropriate fields for an ADD REMINDER request to 
+	 * the request object.
+	 */
+	private void buildUpdateGCMTokenRequest(Request request, JSONObject json){
+		RequestType request_type = RequestType.update_gcm_token;
+		String token = (String) json.get("token");
+		
+		request.setRequestType(request_type);
+		request.setGCMToken(token);
 	}
 	
 	

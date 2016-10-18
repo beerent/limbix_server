@@ -115,13 +115,14 @@ public class TagManager {
 	
 	
 	public ArrayList<String> getStringsFromCommaDeliminatedString(String tags){
-		if(tags.equals("")) return new ArrayList<String>();
+		if(tags == null || tags.equals("")) return null;
 		
 		String [] tags_array = tags.split(",");
 		ArrayList<String> ret_array = new ArrayList<String>();
 		for(String s : tags_array){
 			ret_array.add(s.trim());
 		}
+		System.out.println("returning: " + ret_array);
 		return ret_array;
 	}
 

@@ -32,6 +32,9 @@ public class Request {
 	private Boolean complete;
 	private Boolean deleted;
 	private ArrayList<String> tags;
+	private String gcm_token;
+	private String filter_name;
+	private Integer filter_id;
 	
 	private boolean contains_required_fields;
 	private boolean confirmed_fields;
@@ -152,6 +155,14 @@ public class Request {
 		return this.tags;
 	}
 	
+	public void setGCMToken(String gcm_token){
+		this.gcm_token = gcm_token;
+	}
+	
+	public String getGCMToken(){
+		return this.gcm_token;
+	}
+	
 	@Override
 	public String toString(){
 		String retstr =  "type: " + request_type;
@@ -168,5 +179,21 @@ public class Request {
 		retstr += "\nis complete: " + complete;
 		retstr += "\ntags: " + tags;
 		return retstr;
+	}
+
+	public void setFilterName(String filter_name) {
+		this.filter_name = filter_name;
+	}
+	
+	public String getFilterName(){
+		return this.filter_name;
+	}
+
+	public Integer getFilterId() {
+		return filter_id;
+	}
+
+	public void setFilterId(Integer filter_id) {
+		this.filter_id = filter_id;
 	}
 }

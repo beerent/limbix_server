@@ -117,4 +117,19 @@ public class UserDAO extends DAO{
 		return false;
 	}
 
+	public boolean updateGCMToken(int user_id, String token) {
+		String sql = "insert into gcm_tokens (user_id, gcm_token) values (?, ?) on duplicate key update gcm_token = values (gcm_token)";
+		try{
+			Connection connection = super.getConnection();
+			PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			statement.setInt(1, user_id);
+			statement.setString(2, token);
+			executeInsert(connection, statement);
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 }

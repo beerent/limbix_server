@@ -8,7 +8,11 @@ public enum RequestType {
 	register_user, 
 	update_user,
 	add_filter, 
-	get_tags;
+	get_filters_meta,
+	get_filter,
+	delete_filter,
+	get_tags,
+	update_gcm_token;
 
 	/* RETURNS TRUE IF REQUEST TYPE A PRE LOGIN REQUEST */
 	public static boolean isPreLoginRequest(RequestType request_type) {

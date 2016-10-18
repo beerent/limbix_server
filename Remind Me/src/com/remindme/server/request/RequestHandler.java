@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
+import com.remindme.filter.Filter;
 import com.remindme.filter.FilterManager;
 import com.remindme.reminder.Reminder;
 import com.remindme.reminder.ReminderManager;
@@ -20,7 +21,6 @@ public class RequestHandler {
 	private ReminderManager reminder_manager;
 	private DateUtil date_util;
 	private UserManager user_manager;
-	private FilterManager filter_manager;
 	private TagManager tag_manager;
 
 	public RequestHandler(){
@@ -28,7 +28,6 @@ public class RequestHandler {
 		this.reminder_manager = new ReminderManager();
 		this.date_util = new DateUtil();
 		this.user_manager = new UserManager();
-		this.filter_manager = new FilterManager();
 		this.tag_manager = new TagManager();
 	}
 	
@@ -52,6 +51,10 @@ public class RequestHandler {
 		else if(request_type == RequestType.register_user) request_response = handleRegisterUserRequest(request);
 		else if(request_type == RequestType.update_user) request_response = handleUpdateUserRequest(request);
 		else if(request_type == RequestType.add_filter) request_response = handleAddFilterRequest(request);
+		else if(request_type == RequestType.get_filters_meta) request_response = handleGetFiltersMetaRequest(request);
+		else if(request_type == RequestType.get_filter) request_response = handleGetFilterRequest(request);
+		else if(request_type == RequestType.delete_filter) request_response = handleDeleteFilterRequest(request);
+		else if(request_type == RequestType.update_gcm_token) request_response = handleUpdateGCMTokenRequest(request);
 		
 		return request_response;
 	}
@@ -91,6 +94,8 @@ public class RequestHandler {
 	}
 	
 	private RequestResponse handleGetRemindersRequest(Request request) {
+		FilterManager filter_manager = new FilterManager();
+		
 		User user = request.getUser();
 		ArrayList<String> tags = request.getTags();
 		DateTime due_date_before = request.getDueDateBefore();
@@ -121,9 +126,23 @@ public class RequestHandler {
 						due_date_after, created_date_before, created_date, created_date_after,
 						reminder_id, complete, deleted);
 		
+		filter_manager.setCustomFilter(
+				user,
+				tags, 
+				due_date_before, 
+				due_date, 
+				due_date_after, 
+				created_date_before, 
+				created_date, 
+				created_date_after, 
+				reminder_id, 
+				complete, 
+				deleted
+		);
+		
 		//MAX AMOUNT OF REMINDERS ALLOWED
-		if(reminders.size() >= 500)
-			return this.response_manager.tooManyRemindersFound();
+		//if(reminders.size() >= 500)
+		//	return this.response_manager.tooManyRemindersFound();
 		
 		return this.response_manager.getRemindersSuccess(reminders);
 	}
@@ -171,10 +190,22 @@ public class RequestHandler {
 		Boolean completed = request.getComplete();
 		Boolean deleted = request.getDeleted();
 		
-		Reminder reminder_obj = this.reminder_manager.updateReminder(reminder_id, reminder, due_date, remove_due_date, completed, deleted);
-		if(reminder_obj == null)
+		boolean reminder_updated = this.reminder_manager.updateReminder(reminder_id, reminder, due_date, remove_due_date, completed, deleted);
+		if(!reminder_updated)
 			return this.response_manager.unableToUpdateReminder();
-		return this.response_manager.updateReminderSuccess();
+		
+		boolean reminder_present = this.reminder_manager.reminderExistsInCurrentFilter(request.getUser(), reminder_id);
+		return this.response_manager.updateReminderSuccess(reminder_present);
+	}
+	
+	private RequestResponse handleUpdateGCMTokenRequest(Request request){
+
+		String token = request.getGCMToken();
+		
+		boolean success = this.user_manager.updateGCMToken(request.getUser(), token);
+		if(!success)
+			return this.response_manager.unableToUpdateGCMToken();
+		return this.response_manager.updateTokenSuccess();
 	}
 	
 	private RequestResponse handleRegisterUserRequest(Request request) {
@@ -203,7 +234,10 @@ public class RequestHandler {
 	}
 	
 	private RequestResponse handleAddFilterRequest(Request request) {
+		FilterManager filter_manager = new FilterManager();
+		
 		User user = request.getUser();
+		String filter_name = request.getFilterName();
 		ArrayList<String> tags = request.getTags();
 		DateTime due_date_before = request.getDueDateBefore();
 		DateTime due_date = request.getDueDate();
@@ -228,16 +262,29 @@ public class RequestHandler {
 		}
 		
 		
-		this.filter_manager.addFilter(user, tags, due_date_before, due_date,
-				due_date_after, created_date_before, created_date, created_date_after,
-				reminder_id, complete, deleted);
+		filter_manager.addFilter(user, filter_name, tags, due_date_before, due_date,
+			due_date_after, created_date_before, created_date, created_date_after,
+			reminder_id, complete, deleted
+		);
 		
-		//MAX AMOUNT OF REMINDERS ALLOWED
-		//if(reminders.size() >= 500)
-		//	return this.response_manager.tooManyRemindersFound();
-		
-		//return this.response_manager.getRemindersSuccess(reminders);
-		return null;
+		return response_manager.filterAdded();
 	}
 
+	private RequestResponse handleGetFiltersMetaRequest(Request request) {
+		FilterManager filter_manager = new FilterManager();
+		ArrayList<Filter> filters = filter_manager.getFiltersMeta(request.getUser());
+		return response_manager.getFiltersMetaSuccess(filters);
+	}
+	
+	private RequestResponse handleGetFilterRequest(Request request){
+		FilterManager filter_manager = new FilterManager();
+		Filter filter = filter_manager.getFilter(request.getUser(), request.getFilterId());
+		return response_manager.createGetFilterSuccessResponse(filter);
+	}
+	
+	private RequestResponse handleDeleteFilterRequest(Request request){
+		FilterManager filter_manager = new FilterManager();
+		filter_manager.getDeleteFilter(request.getUser(), request.getFilterId());
+		return response_manager.createDeleteFilterSuccessResponse();
+	}
 }

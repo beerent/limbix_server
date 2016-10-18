@@ -36,4 +36,8 @@ public class DateUtil {
 	public DateTime getCurrentDateTime(){
 		return new LocalDateTime().toDateTime();
 	}
+	
+	public String dateTimeToSimpleString(DateTime date){
+		return date.toString().substring(0, 10);
+	}
 }

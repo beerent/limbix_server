@@ -57,8 +57,7 @@ public class ConnectionHandler extends Thread{
 		/* VERIFY REQUEST TYPE */
 		response = this.request_manager.verifyRequestType(request);
 		if(response != null){
-			write(response.toString());
-			disconnect();
+			sendAndClose(response.toString());
 			return;
 		}
 		
@@ -80,9 +79,12 @@ public class ConnectionHandler extends Thread{
 			response_str = response_manager.invalidRequestType().toString();
 		}
 		
-		write(response_str);
-		System.out.println("RESPONSE: " + response_str);
-		
+		sendAndClose(response_str);
+	}
+	
+	private void sendAndClose(String response){
+		write(response);
+		System.out.println("RESPONSE: " + response);	
 		disconnect();
 	}
 	

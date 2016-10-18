@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.joda.time.DateTime;
+
 import com.remindme.database.DAO;
 import com.remindme.database.QueryResult;
 import com.remindme.user.User;
@@ -105,7 +107,6 @@ public class ReminderDAO extends DAO{
 	public QueryResult getReminders(Integer user_id, String tags, String due_date_before, String due_date,
 			String due_date_after, String created_date_before, String created_date, String created_date_after,
 			Integer reminder_id, String complete, String deleted) {
-		System.out.println(deleted);
 		
 		TagManager tag_manager = new TagManager();
 		ArrayList<String> tags_as_arraylist = null;
@@ -199,6 +200,7 @@ public class ReminderDAO extends DAO{
 				statement.setString(i, deleted);
 			}
 
+			System.out.println("STATEMENT: " + statement);
 			return executeQuery(connection, statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -355,6 +357,15 @@ public class ReminderDAO extends DAO{
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public QueryResult limbExistsInFilter(Integer user_id, String created_before, String created, String created_after,
+			String due_before, String due, String due_after, String tags, String completed, String deleted,
+			int reminder_id) {
+		System.out.println("REMINDER ID: " + reminder_id);
+		return getReminders(user_id, tags, due_before, due,
+				due_after, created_before, created, created_after,
+				reminder_id, completed, deleted);
 	}
 	
 }

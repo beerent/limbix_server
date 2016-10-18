@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.remindme.filter.Filter;
 import com.remindme.reminder.Reminder;
 import com.remindme.reminder.Tag;
+import com.remindme.util.DateUtil;
 
 public class ResponseManager {
 
@@ -38,7 +40,7 @@ public class ResponseManager {
 	}
 	
 	public RequestResponse missingRequestType() {
-		return createErrorResponse("Request is missing request type.");
+		return createErrorResponse("Request is missing request type or request type is invalid.");
 	}
 	
 	public RequestResponse invalidRequestType() {
@@ -119,6 +121,10 @@ public class ResponseManager {
 	
 	public RequestResponse lastNameTooShort() {
 		return createErrorResponse("Last name must have at least 1 character.");
+	}
+	
+	public RequestResponse unableToUpdateGCMToken() {
+		return createErrorResponse("Error trying to add/update GCMToken.");
 	}
 	
 	public RequestResponse firstNameTooLong() {
@@ -209,27 +215,44 @@ public class ResponseManager {
 		return createErrorResponse("Get Tags request requires deleted field.");
 	}
 	
+	public RequestResponse missingOrInvalidGCMToken() {
+		return createErrorResponse("Missing or invalid GCM Token;");
+	}
+	
 	public RequestResponse unknownError() {
 		return createErrorResponse("Request contains an unknown error. The error has been recorded.");
 	}
 	
+	public RequestResponse invalidFilterName() {
+		return createErrorResponse("Filter name must contain atleast one character.");
+	}
+	
 	public RequestResponse updateUserSuccess() {
 		return createSuccessResponse("Update to user profile was successful");
-	}
-	public RequestResponse updateReminderSuccess() {
-		return createSuccessResponse("Update to reminder was successful.");
 	}
 	
 	public RequestResponse addReminderSuccess() {
 		return createSuccessResponse("Reminder is successful.");
 	}
 	
+	public RequestResponse createDeleteFilterSuccessResponse() {
+		return createSuccessResponse("Filter is successfully deleted.");
+	}
+	
 	public RequestResponse registerUserSuccess() {
 		return createSuccessResponse("User has successfully registered.");
 	}
 	
+	public RequestResponse updateTokenSuccess() {
+		return createSuccessResponse("Token successfully added/updated");
+	}
+	
 	public RequestResponse loginUserSuccess() {
 		return createSuccessResponse("User has successfully logged in.");
+	}
+	
+	public RequestResponse filterAdded() {
+		return createSuccessResponse("Filter has been saved.");
 	}
 	
 	public RequestResponse getRemindersSuccess(ArrayList<Reminder> reminders){
@@ -238,6 +261,97 @@ public class ResponseManager {
 	
 	public RequestResponse getTagsSuccess(ArrayList<Tag> tags) {
 		return new RequestResponse(getTagsJSON(tags));
+	}
+	
+	public RequestResponse getFiltersMetaSuccess(ArrayList<Filter> filters){
+		return new RequestResponse(getFiltersMetaJSON(filters));
+	}
+	
+	public RequestResponse getFilterSuccess(Filter filter) {
+		return new RequestResponse(getFilterJSON(filter));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public RequestResponse updateReminderSuccess(boolean present){
+		JSONObject response = new JSONObject();
+		
+		int present_code = 0;
+		if(present)
+			present_code = 1;
+		
+		response.put("present", present_code);
+		response.put("op", 0);
+		response.put("success", "limb successfully updated");
+		JSONObject jo = new JSONObject();
+		jo.put("response", response);
+		return new RequestResponse(jo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public RequestResponse createGetFilterSuccessResponse(Filter filter){		
+		DateUtil date_util = new DateUtil();
+		
+		JSONObject response = new JSONObject();
+		response.put("op", 0);
+		response.put("filter_name", filter.getName());
+		response.put("filter_id", filter.getId());
+		response.put("tags", filter.getTags());
+		try{ response.put("created_before", date_util.dateTimeToSimpleString(filter.getCreatedBefore())); } 
+		catch(Exception e) {response.put("created_before", "null"); } 
+		
+		try{response.put("created", date_util.dateTimeToSimpleString(filter.getCreated())); } 
+		catch(Exception e) {response.put("created", "null"); }
+		
+		try{response.put("created_after", date_util.dateTimeToSimpleString(filter.getCreatedAfter())); } 
+		catch(Exception e) {response.put("created_after", "null");}
+		
+		try{response.put("due_before", date_util.dateTimeToSimpleString(filter.getDueBefore())); } 
+		catch(Exception e) {response.put("due_before", "null");}
+		
+		try{response.put("due", date_util.dateTimeToSimpleString(filter.getDue())); } 
+		catch(Exception e) {response.put("due", "null");}
+		
+		try{response.put("due_after", date_util.dateTimeToSimpleString(filter.getDueAfter())); } 
+		catch(Exception e) {response.put("due_after", "null");}
+		
+		try{response.put("complete", filter.isCompleted()); } 
+		catch(Exception e) {response.put("complete", "null");}
+		
+		try{response.put("deleted", filter.isDeleted()); } 
+		catch(Exception e) {response.put("deleted", "null");}
+		
+		JSONObject jo = new JSONObject();
+		jo.put("response", response);
+		return new RequestResponse(jo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject getFilterJSON(Filter filter){
+		JSONObject filter_json = new JSONObject();
+		
+		filter_json.put("filter_name", filter.getName());
+		filter_json.put("filter_id", filter.getId());
+		return filter_json;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject getFiltersMetaJSON(ArrayList<Filter> filters){
+		JSONObject return_json = new JSONObject();
+		JSONArray filters_names_array = new JSONArray();
+		for(Filter filter : filters){
+			filters_names_array.add(getFilterMetaJSON(filter));
+		}
+		return_json.put("filters", filters_names_array);
+		return return_json;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject getFilterMetaJSON(Filter filter){
+		JSONObject filter_json = new JSONObject();
+		
+		filter_json.put("filter_name", filter.getName());
+		filter_json.put("filter_id", filter.getId());
+		return filter_json;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -303,4 +417,12 @@ public class ResponseManager {
 		jo.put("response", response);
 		return new RequestResponse(jo);
 	}
+
+	public RequestResponse getFiltersNames(ArrayList<String> filters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
 }

@@ -1,6 +1,7 @@
 package com.remindme.user;
 
 import com.remindme.database.QueryResult;
+import com.remindme.reminder.Reminder;
 import com.remindme.server.response.RequestResponse;
 import com.remindme.server.response.ResponseManager;
 
@@ -196,5 +197,9 @@ public class UserManager{
 		if(success)
 			return getUser(user.getUserId());
 		return null;
+	}
+
+	public boolean updateGCMToken(User user, String token) {
+		return this.user_dao.updateGCMToken(user.getUserId(), token);
 	}
 }

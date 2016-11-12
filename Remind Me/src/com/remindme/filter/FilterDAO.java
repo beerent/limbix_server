@@ -292,7 +292,7 @@ public class FilterDAO extends DAO{
 	}
 
 	public QueryResult getCustomFilterId(int user_id) {
-		String sql = "select filter_id from filters where user_id = ? and filter_name = '[custom]'";
+		String sql = "select filter_id from filters where user_id = ? and current = 1";
 		try{
 			Connection connection = super.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);

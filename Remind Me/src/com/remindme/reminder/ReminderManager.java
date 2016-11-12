@@ -225,6 +225,7 @@ public class ReminderManager {
 		DateUtil date_util = new DateUtil();
 		
 		FilterManager filter_manager = new FilterManager();
+		//TODO: do not default to 
 		Filter current_filter = filter_manager.getCurrentUserFilter(user);
 		
 		DateTime created_before = current_filter.getCreatedBefore();
